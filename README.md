@@ -2,10 +2,12 @@
 Develop a command line interface for a disrupter bank.
 
 **1 Overview of Group Project**
+
 NewBank is an idea for a new disrupter bank where customers can interact with their accounts via a simple command-line interface. The originator of this idea has produced some basic client-server code as well as a protocol for sending commands and receiving responses from the NewBank server. The originator of the idea has asked your group to further develop their base code - specifically, implementing the protocol. However, the originator is also keen for input and your team can alter or add to the protocol to improve interaction with the NewBank server as well as to add new services. For example, the originator is keen for NewBank customers to be able to offer micro-loans to other NewBank customers in a micro-loan marketplace.
 You and a team of developers have taken up this challenge. Your team have access to the originators basic client-server code as well as the protocol for sending commands and receiving responses from the NewBank server. The originator has said that your group can add to, remove and/or alter any part of this basic code as well as the proposed protocol. Their only requirement is that customers have to interact via a command-line interface and that any changes/additions to the protocol are fully documented.
 
 **2 Team Roles**
+
 Your team have decided to take an agile development approach to development. Your team have also agreed to test out how SCRUM can work in an asynchronous team (as each of the developers works part-time on this project and are not in the same physical location). The team has three roles,
 1. Scrum Master - Organises the development goals for the sprint, reviews code com- mitted to the GitHub repository, trouble shoots development queries.
 
@@ -28,6 +30,7 @@ The originator of this idea has produced some basic client-server code as well a
 Your team has noticed that the originator has not documented their code very well. However, the originator has left a comment in the file NewBank.java which indicates where the protocol functionality should be implemented and provides an example for the com- mand SHOWMYACCOUNTS.
 
 **3.2 Suggested Week Activities**
+
 3.2.1 Week 1: Group Allocation and Introduction
 You have been allocated to a group of up to 5 people. You should introduce yourself to your group and between you decide on who will be the Scrum Master, Product Owner and Scrum Team for next week.
 If you are unfamiliar with agile development and the roles in SCRUM, this weeks Software Engineering Discovery section also covers Agile and team roles in SCRUM.
@@ -38,6 +41,7 @@ Once you have decided the roles from this week, it is suggested that,
 • Each member should propose requirements for the NewBank software including ad- ditions/removals/changes to the protocol
 
 3.2.2 Week 2: Sprint 1
+
 You and your group should be familiar with the source code and protocol, as well as have an initial list of requirements. You will now undertake a development sprint. To do this, follow the steps below.
 • The Scrum Master should, on the Trello page for your group, add a new document which sets out the development goals for the week based on the list of requirements generated in Week 1. This document should also include a backlog i.e. the rest of the requirements.
 • The Product Owner might suggest changes to this list.
@@ -55,6 +59,7 @@ A suggested schedule for the sprint might look like this:
 • Wednesday to Friday - Scrum Master reviews committed code and trouble-shoots problems
 
 3.2.3 Week 3 to 6: Sprint 2 to 5
+
 This week you should hold a virtual scrum and define your next sprint. You will also select who will be your Scrum Master and Product Owner for the next sprint. To do this, follow the steps below:
 • The out-going Scrum Master should add a document on the Trello page that contains the following questions for everyone to answer: What have I done this week?. What problems have I encountered? Have I solved them and how?
 • All group members are encouraged to contribute to any discussion around the second question above.
@@ -79,6 +84,7 @@ A suggested schedule for the sprint might look like this:
 NOTE: After week 6 you will submit this Graded Assignment. The Scrum Master should submit a text file of the link to your group’s GitHub and Trello sites.
 
 **4 Resources**
+
 4.1 Git and Bath Git Hub
 You can download Git at https://git-scm.com/downloads. There are also good reference material, including video tutorials, at https://git-scm.com/doc.
 The University of Bath has its own GitHub Enterprise Version Control System at https://github.bath.ac.uk/. You will have access to this with your university account.
