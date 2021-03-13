@@ -39,15 +39,19 @@ public class NewBank {
 
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
+		// Split into into separate words to handle multi-word commands
+		String[] commandLine = request.split(" ");
+		String command = commandLine[0];
+
 		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
+			switch(command) {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 			default : return "FAIL";
 			}
 		}
 		return "FAIL";
 	}
-	
+
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
