@@ -35,4 +35,13 @@ public class Customer {
 		}
 		return false;
 	}
+
+	public Account getAccount(String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				return account;
+			}
+		}
+		return null;
+	}
 }

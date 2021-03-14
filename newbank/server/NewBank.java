@@ -15,6 +15,7 @@ public class NewBank {
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Savings", 1500.0));
 		customers.put("Bhagy", bhagy);
 		
 		Customer christina = new Customer();
@@ -47,6 +48,7 @@ public class NewBank {
 			switch(command) {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
+			case "MOVE" : return move(customer, commandLine);
 			default : return "FAIL";
 			}
 		}
@@ -70,5 +72,48 @@ public class NewBank {
 		customer.addAccount(new Account(accountName, 0));
 
 		return String.format("SUCCESS. %s account created for user: %s", accountName, customerID.getKey());
+	}
+
+	private String move(CustomerID customerID, String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 4) {
+			return "FAIL";
+		}
+
+		// Fail if the amount argument is non-numeric
+		try {
+			double amount = Double.parseDouble(commandLine[1]);
+		} catch (NumberFormatException nfe) {
+			return "FAIL";
+		}
+
+		// Get the requester
+		Customer customer = customers.get(customerID.getKey());
+
+		// Fail if the from and to accounts don't exist
+		if(!(customer.alreadyHasAnAccountWithName(commandLine[2]) && customer.alreadyHasAnAccountWithName(commandLine[3]))) {
+			return "FAIL";
+		}
+
+		// Fail if source and destination accounts are the same
+		if(commandLine[2].equals(commandLine[3])) {
+			return "FAIL";
+		}
+
+		// Set source and destination accounts
+		Account sourceAccount = customer.getAccount(commandLine[2]);
+		Account destinationAccount = customer.getAccount(commandLine[3]);
+
+		// Fail if source account has insufficient funds
+		double amount = Double.parseDouble(commandLine[1]);
+		if (sourceAccount.getBalance() < amount) {
+			return "FAIL";
+		}
+
+		// Decrease source account balance
+		sourceAccount.changeBalance(amount * -1);
+		// Increase destination account balance
+		destinationAccount.changeBalance(amount);
+		return "SUCCESS";
 	}
 }
