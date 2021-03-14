@@ -77,27 +77,30 @@ public class NewBank {
 	private String move(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 4) {
-			return "FAIL";
+			return "FAIL. This command requires an amount, a source account, and a destination account";
 		}
 
 		// Fail if the amount argument is non-numeric
 		try {
 			double amount = Double.parseDouble(commandLine[1]);
 		} catch (NumberFormatException nfe) {
-			return "FAIL";
+			return "FAIL. This command requires an amount, a source account, and a destination account";
 		}
 
 		// Get the requester
 		Customer customer = customers.get(customerID.getKey());
 
 		// Fail if the from and to accounts don't exist
-		if(!(customer.alreadyHasAnAccountWithName(commandLine[2]) && customer.alreadyHasAnAccountWithName(commandLine[3]))) {
-			return "FAIL";
+		if(!customer.alreadyHasAnAccountWithName(commandLine[2])) {
+			return String.format("FAIL. The source account %s does not exist", commandLine[2]);
+		}
+		if(!customer.alreadyHasAnAccountWithName(commandLine[3])) {
+			return String.format("FAIL. The destination account %s does not exist", commandLine[3]);
 		}
 
 		// Fail if source and destination accounts are the same
 		if(commandLine[2].equals(commandLine[3])) {
-			return "FAIL";
+			return "FAIL. The source and destination accounts must be different";
 		}
 
 		// Set source and destination accounts
@@ -107,13 +110,13 @@ public class NewBank {
 		// Fail if source account has insufficient funds
 		double amount = Double.parseDouble(commandLine[1]);
 		if (sourceAccount.getBalance() < amount) {
-			return "FAIL";
+			return "FAIL. Insufficient funds for the transfer";
 		}
 
 		// Decrease source account balance
 		sourceAccount.changeBalance(amount * -1);
 		// Increase destination account balance
 		destinationAccount.changeBalance(amount);
-		return "SUCCESS";
+		return String.format("SUCCESS. %s has been moved from %s to %s", commandLine[1], commandLine[2], commandLine[3]);
 	}
 }
