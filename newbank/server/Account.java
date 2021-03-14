@@ -4,6 +4,9 @@ public class Account {
 	
 	private String accountName;
 
+	/**
+	 * @return the name of the account
+	 */
 	public String getAccountName() {
 		return accountName;
 	}

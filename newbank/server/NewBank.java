@@ -58,19 +58,17 @@ public class NewBank {
 	}
 
 	private String createNewAccount(CustomerID customerID, String accountName) {
-		// Get the customer and the corresponding accounts
+		// Get the requester
 		Customer customer = customers.get(customerID.getKey());
 
-		// Return FAIL if the customer already has an account with the given name
+		// Return FAIL if the requester already has an account with the given name
 		if (customer.alreadyHasAnAccountWithName(accountName)) {
-			return "FAIL";
+			return String.format("FAIL. Customer: %s already has an account with the name: %s", customerID.getKey(), accountName);
 		}
 
 		// Create the account
 		customer.addAccount(new Account(accountName, 0));
 
-		// ToDo Double check?
-
-		return "SUCCESS";
+		return String.format("SUCCESS. %s account created for user: %s", accountName, customerID.getKey());
 	}
 }
