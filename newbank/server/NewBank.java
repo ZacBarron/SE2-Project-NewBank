@@ -46,6 +46,7 @@ public class NewBank {
 		if(customers.containsKey(customer.getKey())) {
 			switch(command) {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
 			default : return "FAIL";
 			}
 		}
@@ -56,4 +57,20 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
+	private String createNewAccount(CustomerID customerID, String accountName) {
+		// Get the customer and the corresponding accounts
+		Customer customer = customers.get(customerID.getKey());
+
+		// Return FAIL if the customer already has an account with the given name
+		if (customer.alreadyHasAnAccountWithName(accountName)) {
+			return "FAIL";
+		}
+
+		// Create the account
+		customer.addAccount(new Account(accountName, 0));
+
+		// ToDo Double check?
+
+		return "SUCCESS";
+	}
 }
