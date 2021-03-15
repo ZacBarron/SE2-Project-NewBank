@@ -144,7 +144,7 @@ public class NewBank {
 
 		// FAIL if the recipient not exists
 		if (payee == null) {
-			return String.format("FAIL. Payee: %s not exists", commandLine[1]);
+			return String.format("FAIL. Payee: %s does not exist", commandLine[1]);
 		}
 
 		// FAIL if the payer account not exists
@@ -161,7 +161,7 @@ public class NewBank {
 
 		// FAIL if the payer account has insufficient funds
 		if (!payer.eligibleToPay(amount, payerAccount)) {
-			return String.format("FAIL. Insufficient funds on account: %s", payerAccount);
+			return String.format("FAIL. Insufficient funds in account: %s", payerAccount);
 		}
 
 		// Modify balances
