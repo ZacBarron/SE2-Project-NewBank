@@ -50,10 +50,10 @@ public class NewBank {
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
 			case "MOVE" : return move(customer, commandLine);
 			case "PAY" : return executePayment(customer, commandLine);
-			default : return "FAIL";
+			default : return "FAIL. Command not recognized.";
 			}
 		}
-		return "FAIL";
+		return "FAIL. Customer not recognized.";
 	}
 
 	private String showMyAccounts(CustomerID customer) {
@@ -123,27 +123,45 @@ public class NewBank {
 	}
 
 	private String executePayment(CustomerID customerID, String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 5) {
+			return "FAIL. This command requires the following format: PAY <Person/Company> <Amount> <From> <To>";
+		}
+
+		double amount;
+		// Fail if the amount argument is non-numeric
+		try {
+			amount = Double.parseDouble(commandLine[2]);
+		} catch (NumberFormatException nfe) {
+			return "FAIL. Please enter a numeric value for argument: <Amount>";
+		}
+
 		Customer payer = customers.get(customerID.getKey());
 		Customer payee = customers.get(commandLine[1]);
-		String accountName = commandLine[3];
-		double amount = Double.parseDouble(commandLine[2]);
+		String payerAccount = commandLine[3];
+		String payeeAccount = commandLine[4];
 
 		if (payee == null) {
 			return String.format("FAIL. Payee: %s not exists", commandLine[1]);
 		}
 
-		if (!payer.accountExists(accountName)) {
+		if (!payer.accountExists(payerAccount)) {
 			return String.format("FAIL. Customer: %s has no account with the name: %s",
-					customerID.getKey(), accountName);
+					customerID.getKey(), payerAccount);
 		}
 
-		if (!payer.eligibleToPay(amount, accountName)) {
-			return String.format("FAIL. Insufficient funds on account: %s", accountName);
+		if (!payee.accountExists(payeeAccount)) {
+			return String.format("FAIL. Customer: %s has no account with the name: %s",
+					commandLine[1], payeeAccount);
 		}
 
-		payer.modifyAccountBalance(-amount, accountName);
-		payee.modifyAccountBalance(amount, "Main");
+		if (!payer.eligibleToPay(amount, payerAccount)) {
+			return String.format("FAIL. Insufficient funds on account: %s", payerAccount);
+		}
 
-		return String.format("SUCCESS. %s payed for user: %s from account: ", amount, payee, accountName);
+		payer.modifyAccountBalance(amount * -1, payerAccount);
+		payee.modifyAccountBalance(amount, payeeAccount);
+
+		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
 	}
 }
