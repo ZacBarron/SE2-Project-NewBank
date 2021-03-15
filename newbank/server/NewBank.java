@@ -93,10 +93,10 @@ public class NewBank {
 		Customer customer = customers.get(customerID.getKey());
 
 		// Fail if the from and to accounts don't exist
-		if(!customer.alreadyHasAnAccountWithName(commandLine[2])) {
+		if(!customer.accountExists(commandLine[2])) {
 			return String.format("FAIL. The source account %s does not exist", commandLine[2]);
 		}
-		if(!customer.alreadyHasAnAccountWithName(commandLine[3])) {
+		if(!customer.accountExists(commandLine[3])) {
 			return String.format("FAIL. The destination account %s does not exist", commandLine[3]);
 		}
 
