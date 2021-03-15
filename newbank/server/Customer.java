@@ -21,4 +21,18 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);		
 	}
+
+	/**
+	 * This method is used to check if the customer already has an account with the given name
+	 * @param accountName the name to be checked in the existing accounts
+	 * @return boolean
+	 */
+	public boolean alreadyHasAnAccountWithName(String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
