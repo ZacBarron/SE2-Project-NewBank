@@ -49,7 +49,7 @@ public class NewBank {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
 			case "MOVE" : return move(customer, commandLine);
-			case "PAY" : return executePayment(customer, commandLine);
+			case "PAY" : return pay(customer, commandLine);
 			default : return "FAIL. Command not recognized.";
 			}
 		}
@@ -122,7 +122,7 @@ public class NewBank {
 		return String.format("SUCCESS. %s has been moved from %s to %s", commandLine[1], commandLine[2], commandLine[3]);
 	}
 
-	private String executePayment(CustomerID customerID, String[] commandLine) {
+	private String pay(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 5) {
 			return "FAIL. This command requires the following format: PAY <Person/Company> <Amount> <From> <To>";
@@ -141,24 +141,30 @@ public class NewBank {
 		String payerAccount = commandLine[3];
 		String payeeAccount = commandLine[4];
 
+
+		// FAIL if the recipient not exists
 		if (payee == null) {
 			return String.format("FAIL. Payee: %s not exists", commandLine[1]);
 		}
 
+		// FAIL if the payer account not exists
 		if (!payer.accountExists(payerAccount)) {
 			return String.format("FAIL. Customer: %s has no account with the name: %s",
 					customerID.getKey(), payerAccount);
 		}
 
+		// FAIL if the payee account not exists
 		if (!payee.accountExists(payeeAccount)) {
 			return String.format("FAIL. Customer: %s has no account with the name: %s",
 					commandLine[1], payeeAccount);
 		}
 
+		// FAIL if the payer account has insufficient funds
 		if (!payer.eligibleToPay(amount, payerAccount)) {
 			return String.format("FAIL. Insufficient funds on account: %s", payerAccount);
 		}
 
+		// Modify balances
 		payer.modifyAccountBalance(amount * -1, payerAccount);
 		payee.modifyAccountBalance(amount, payeeAccount);
 

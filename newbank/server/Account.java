@@ -13,6 +13,9 @@ public class Account {
 
 	private double currentBalance;
 
+	/**
+	 * @return the current balance
+	 */
 	public double getCurrentBalance() {
 		return currentBalance;
 	}
