@@ -15,5 +15,5 @@ e.g. MOVE 100 Main Savings
 Returns SUCCESS or FAIL
 
 PAY <Person/Company> <Amount> <From> <To>
-e.g. PAY John 100 Main
+e.g. PAY John 100 Main Savings
 Returns SUCCESS or FAIL
