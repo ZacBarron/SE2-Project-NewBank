@@ -27,7 +27,7 @@ public class Customer {
 	 * @param accountName the name to be checked in the existing accounts
 	 * @return boolean
 	 */
-	public boolean alreadyHasAnAccountWithName(String accountName) {
+	public boolean accountExists(String accountName) {
 		for (Account account : accounts) {
 			if (account.getAccountName().equals(accountName)) {
 				return true;
@@ -36,6 +36,11 @@ public class Customer {
 		return false;
 	}
 
+	/**
+	 * This method is used to get the given account for a customer by accountName
+	 * @param accountName the name of the account
+	 * @return Account
+	 */
 	public Account getAccount(String accountName) {
 		for (Account account : accounts) {
 			if (account.getAccountName().equals(accountName)) {
@@ -43,5 +48,35 @@ public class Customer {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * This method is used to check if the customer has sufficient funds
+	 * on a given account for a transaction
+	 * @param amount the amount to be transferred
+	 * @param accountName the account to be checked
+	 * @return boolean
+	 */
+	public boolean eligibleToPay(double amount, String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName) && account.getCurrentBalance() >= amount) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * This method is used to modify the a given balance by a given amount
+	 * @param amount the amount to be transferred
+	 * @param accountName the account to pay from
+	 * @return boolean
+	 */
+	public void modifyAccountBalance(double amount, String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				account.changeBalance(amount);
+			}
+		}
 	}
 }

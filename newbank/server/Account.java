@@ -11,25 +11,27 @@ public class Account {
 		return accountName;
 	}
 
-	private double openingBalance;
+	private double currentBalance;
+
+	/**
+	 * @return the current balance
+	 */
+	public double getCurrentBalance() {
+		return currentBalance;
+	}
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
-		this.openingBalance = openingBalance;
+		this.currentBalance = openingBalance;
 	}
 
-	// Return the account balance
-	public double getBalance() {
-		return openingBalance;
-	}
-
-	public double changeBalance(double amount) {
-		openingBalance += amount;
-		return openingBalance;
+	// Change the current balance by the given amount
+	public void changeBalance(double amount) {
+		currentBalance += amount;
 	}
 
 	public String toString() {
-		return (accountName + ": " + openingBalance);
+		return (accountName + ": " + currentBalance);
 	}
 
 }

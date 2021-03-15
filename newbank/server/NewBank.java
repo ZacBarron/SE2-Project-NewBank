@@ -49,10 +49,11 @@ public class NewBank {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
 			case "MOVE" : return move(customer, commandLine);
-			default : return "FAIL";
+			case "PAY" : return pay(customer, commandLine);
+			default : return "FAIL. Command not recognized.";
 			}
 		}
-		return "FAIL";
+		return "FAIL. Customer not recognized.";
 	}
 
 	private String showMyAccounts(CustomerID customer) {
@@ -64,8 +65,9 @@ public class NewBank {
 		Customer customer = customers.get(customerID.getKey());
 
 		// Return FAIL if the requester already has an account with the given name
-		if (customer.alreadyHasAnAccountWithName(accountName)) {
-			return String.format("FAIL. Customer: %s already has an account with the name: %s", customerID.getKey(), accountName);
+		if (customer.accountExists(accountName)) {
+			return String.format("FAIL. Customer: %s already has an account with the name: %s",
+					customerID.getKey(), accountName);
 		}
 
 		// Create the account
@@ -91,10 +93,10 @@ public class NewBank {
 		Customer customer = customers.get(customerID.getKey());
 
 		// Fail if the from and to accounts don't exist
-		if(!customer.alreadyHasAnAccountWithName(commandLine[2])) {
+		if(!customer.accountExists(commandLine[2])) {
 			return String.format("FAIL. The source account %s does not exist", commandLine[2]);
 		}
-		if(!customer.alreadyHasAnAccountWithName(commandLine[3])) {
+		if(!customer.accountExists(commandLine[3])) {
 			return String.format("FAIL. The destination account %s does not exist", commandLine[3]);
 		}
 
@@ -109,7 +111,7 @@ public class NewBank {
 
 		// Fail if source account has insufficient funds
 		double amount = Double.parseDouble(commandLine[1]);
-		if (sourceAccount.getBalance() < amount) {
+		if (sourceAccount.getCurrentBalance() < amount) {
 			return "FAIL. Insufficient funds for the transfer";
 		}
 
@@ -118,5 +120,54 @@ public class NewBank {
 		// Increase destination account balance
 		destinationAccount.changeBalance(amount);
 		return String.format("SUCCESS. %s has been moved from %s to %s", commandLine[1], commandLine[2], commandLine[3]);
+	}
+
+	private String pay(CustomerID customerID, String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 5) {
+			return "FAIL. This command requires the following format: PAY <Person/Company> <Amount> <From> <To>";
+		}
+
+		double amount;
+		// Fail if the amount argument is non-numeric
+		try {
+			amount = Double.parseDouble(commandLine[2]);
+		} catch (NumberFormatException nfe) {
+			return "FAIL. Please enter a numeric value for argument: <Amount>";
+		}
+
+		Customer payer = customers.get(customerID.getKey());
+		Customer payee = customers.get(commandLine[1]);
+		String payerAccount = commandLine[3];
+		String payeeAccount = commandLine[4];
+
+
+		// FAIL if the recipient not exists
+		if (payee == null) {
+			return String.format("FAIL. Payee: %s not exists", commandLine[1]);
+		}
+
+		// FAIL if the payer account not exists
+		if (!payer.accountExists(payerAccount)) {
+			return String.format("FAIL. Customer: %s has no account with the name: %s",
+					customerID.getKey(), payerAccount);
+		}
+
+		// FAIL if the payee account not exists
+		if (!payee.accountExists(payeeAccount)) {
+			return String.format("FAIL. Customer: %s has no account with the name: %s",
+					commandLine[1], payeeAccount);
+		}
+
+		// FAIL if the payer account has insufficient funds
+		if (!payer.eligibleToPay(amount, payerAccount)) {
+			return String.format("FAIL. Insufficient funds on account: %s", payerAccount);
+		}
+
+		// Modify balances
+		payer.modifyAccountBalance(amount * -1, payerAccount);
+		payee.modifyAccountBalance(amount, payeeAccount);
+
+		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
 	}
 }
