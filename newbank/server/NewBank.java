@@ -111,7 +111,7 @@ public class NewBank {
 
 		// Fail if source account has insufficient funds
 		double amount = Double.parseDouble(commandLine[1]);
-		if (sourceAccount.getBalance() < amount) {
+		if (sourceAccount.getCurrentBalance() < amount) {
 			return "FAIL. Insufficient funds for the transfer";
 		}
 

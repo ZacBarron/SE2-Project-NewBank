@@ -25,11 +25,6 @@ public class Account {
 		this.currentBalance = openingBalance;
 	}
 
-	// Return the account balance
-	public double getBalance() {
-		return currentBalance;
-	}
-
 	// Change the current balance by the given amount
 	public void changeBalance(double amount) {
 		currentBalance += amount;
