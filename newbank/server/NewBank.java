@@ -49,6 +49,7 @@ public class NewBank {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
 			case "MOVE" : return move(customer, commandLine);
+			case "PAY" : return executePayment(customer, commandLine);
 			default : return "FAIL";
 			}
 		}
@@ -64,8 +65,9 @@ public class NewBank {
 		Customer customer = customers.get(customerID.getKey());
 
 		// Return FAIL if the requester already has an account with the given name
-		if (customer.alreadyHasAnAccountWithName(accountName)) {
-			return String.format("FAIL. Customer: %s already has an account with the name: %s", customerID.getKey(), accountName);
+		if (customer.accountExists(accountName)) {
+			return String.format("FAIL. Customer: %s already has an account with the name: %s",
+					customerID.getKey(), accountName);
 		}
 
 		// Create the account
@@ -118,5 +120,30 @@ public class NewBank {
 		// Increase destination account balance
 		destinationAccount.changeBalance(amount);
 		return String.format("SUCCESS. %s has been moved from %s to %s", commandLine[1], commandLine[2], commandLine[3]);
+	}
+
+	private String executePayment(CustomerID customerID, String[] commandLine) {
+		Customer payer = customers.get(customerID.getKey());
+		Customer payee = customers.get(commandLine[1]);
+		String accountName = commandLine[3];
+		double amount = Double.parseDouble(commandLine[2]);
+
+		if (payee == null) {
+			return String.format("FAIL. Payee: %s not exists", commandLine[1]);
+		}
+
+		if (!payer.accountExists(accountName)) {
+			return String.format("FAIL. Customer: %s has no account with the name: %s",
+					customerID.getKey(), accountName);
+		}
+
+		if (!payer.eligibleToPay(amount, accountName)) {
+			return String.format("FAIL. Insufficient funds on account: %s", accountName);
+		}
+
+		payer.modifyAccountBalance(-amount, accountName);
+		payee.modifyAccountBalance(amount, "Main");
+
+		return String.format("SUCCESS. %s payed for user: %s from account: ", amount, payee, accountName);
 	}
 }

@@ -27,7 +27,7 @@ public class Customer {
 	 * @param accountName the name to be checked in the existing accounts
 	 * @return boolean
 	 */
-	public boolean alreadyHasAnAccountWithName(String accountName) {
+	public boolean accountExists(String accountName) {
 		for (Account account : accounts) {
 			if (account.getAccountName().equals(accountName)) {
 				return true;
@@ -43,5 +43,22 @@ public class Customer {
 			}
 		}
 		return null;
+	}
+
+	public boolean eligibleToPay(double amount, String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName) && account.getCurrentBalance() >= amount) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void modifyAccountBalance(double amount, String accountName) {
+		for (Account account : accounts) {
+			if (account.getAccountName().equals(accountName)) {
+				account.setCurrentBalance(amount);
+			}
+		}
 	}
 }
