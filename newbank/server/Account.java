@@ -17,7 +17,17 @@ public class Account {
 		this.accountName = accountName;
 		this.openingBalance = openingBalance;
 	}
-	
+
+	// Return the account balance
+	public double getBalance() {
+		return openingBalance;
+	}
+
+	public double changeBalance(double amount) {
+		openingBalance += amount;
+		return openingBalance;
+	}
+
 	public String toString() {
 		return (accountName + ": " + openingBalance);
 	}
