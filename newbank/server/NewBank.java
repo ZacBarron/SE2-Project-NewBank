@@ -203,7 +203,7 @@ public class NewBank {
 			String allHelpCommands = "";
 			for (Entry<String, Help> entry : helpCommands.entrySet()) {
 					Help helpCommand = entry.getValue();
-					allHelpCommands += helpCommand.toString() + "\n";
+					allHelpCommands += helpCommand.toString() + "\n\n";
 			}
 			return allHelpCommands;
 		}
