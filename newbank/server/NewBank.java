@@ -199,12 +199,17 @@ public class NewBank {
 			return "FAIL. This command requires the following format: HELP or HELP <Command>";
 
 		// Print all commands help if only HELP is typed
-		if (commandLine.length == 1)
-			return "Print AL";
+		if (commandLine.length == 1) {
+			String allHelpCommands = "";
+			for (Entry<String, Help> entry : helpCommands.entrySet()) {
+					Help helpCommand = entry.getValue();
+					allHelpCommands += helpCommand.toString() + "\n";
+			}
+			return allHelpCommands;
+		}
 
 		// Print specific help for the specific command entered after HEL
 		for (Entry<String, Help> entry : helpCommands.entrySet()) {
-
 			if (entry.getKey().equals(commandLine[1])) {
 				Help helpCommand = entry.getValue();
 				return helpCommand.toString();

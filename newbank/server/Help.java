@@ -15,7 +15,7 @@ public class Help {
     }
 
     public String toString() {
-        return (command + "\n" + example + "\n" + description + "\n");
+        return (command + "\n" + example + "\n" + description);
     }
 
 }
