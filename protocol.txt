@@ -2,9 +2,13 @@ This document details the protocol for interacting with the NewBank server.
 
 A customer enters the command below and sees the messages returned 
 
+HELP or HELP <Command>
+e.g. HELP MOVE
+Returns a help description for all commands or for one specific command
+
 SHOWMYACCOUNTS
-Returns a list of all the customers accounts along with their current balance 
-e.g. Main: 1000.0 
+e.g. Main: 1000.0
+Returns a list of all the customers accounts along with their current balance
 
 NEWACCOUNT <Name>
 e.g. NEWACCOUNT Savings

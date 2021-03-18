@@ -1,15 +1,19 @@
 package newbank.server;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private HashMap<String,Help> helpCommands;
 	
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
+		helpCommands = new HashMap<>();
+		addHelpCommands();
 	}
 	
 	private void addTestData() {
@@ -25,6 +29,23 @@ public class NewBank {
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
+	}
+
+	private void addHelpCommands() {
+		Help help = new Help("HELP or HELP <Command>", "e.g. HELP MOVE", "Returns a help description for all commands or for one specific command");
+		helpCommands.put("HELP", help);
+
+		Help showMyAccounts = new Help("SHOWMYACCOUNTS", "e.g. Main: 1000.0", "Returns a list of all the customers accounts along with their current balance");
+		helpCommands.put("SHOWMYACCOUNTS", showMyAccounts);
+
+		Help newAccount = new Help("NEWACCOUNT <Name>", "e.g. NEWACCOUNT Savings", "Returns SUCCESS or FAIL");
+		helpCommands.put("NEWACCOUNT", newAccount);
+
+		Help move = new Help("MOVE <Amount> <From> <To>", "e.g. MOVE 100 Main Savings ", "Returns SUCCESS or FAIL");
+		helpCommands.put("MOVE", move);
+
+		Help pay = new Help("PAY <Person/Company> <Amount> <From> <To>", "e.g. PAY John 100 Main Savings", "Returns SUCCESS or FAIL");
+		helpCommands.put("PAY", pay);
 	}
 	
 	public static NewBank getBank() {
@@ -50,6 +71,7 @@ public class NewBank {
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
 			case "MOVE" : return move(customer, commandLine);
 			case "PAY" : return pay(customer, commandLine);
+			case "HELP" : return help(commandLine);
 			default : return "FAIL. Command not recognized.";
 			}
 		}
@@ -169,5 +191,25 @@ public class NewBank {
 		payee.modifyAccountBalance(amount, payeeAccount);
 
 		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
+	}
+
+	private String help(String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if (commandLine.length > 2)
+			return "FAIL. This command requires the following format: HELP or HELP <Command>";
+
+		// Print all commands help if only HELP is typed
+		if (commandLine.length == 1)
+			return "Print AL";
+
+		// Print specific help for the specific command entered after HEL
+		for (Entry<String, Help> entry : helpCommands.entrySet()) {
+
+			if (entry.getKey().equals(commandLine[1])) {
+				Help helpCommand = entry.getValue();
+				return helpCommand.toString();
+			}
+		}
+		return "FAIL. The command you entered does not exist";
 	}
 }
