@@ -37,12 +37,12 @@ public class NewBankClientHandler extends Thread{
 				while(true) {
 					String request = in.readLine();
 					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
-					out.println(responce);
+					String response = bank.processRequest(customer, request);
+					out.println(response);
 				}
 			}
 			else {
-				out.println("Log In Failed");
+				out.println("Log In Failed, please try again");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

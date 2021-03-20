@@ -20,8 +20,9 @@ public class Customer {
 	public String accountsToString() {
 		String s = "";
 		for(Account a : accounts) {
-			s += a.toString();
+			s += a.toString() + "\n";
 		}
+		s = s.substring(0,s.length()-1);
 		return s;
 	}
 
@@ -70,7 +71,6 @@ public class Customer {
 		}
 		return false;
 	}
-
 	/**
 	 * This method is used to get the given account for a customer by accountName
 	 * @param accountName the name of the account
