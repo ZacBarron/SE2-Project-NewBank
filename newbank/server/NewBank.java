@@ -53,7 +53,7 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if(customers.containsKey(userName)) {
+		if(customers.containsKey(userName) && customers.get(userName).passwordCorrect(password)) {
 			return new CustomerID(userName);
 		}
 		return null;
