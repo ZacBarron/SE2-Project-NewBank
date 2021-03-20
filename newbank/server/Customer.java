@@ -9,7 +9,7 @@ public class Customer {
 	private ArrayList<Account> accounts;
 	private String forenames;
 	private String surname;
-	private String password;
+	private String password = "foo";
 	private String phoneNumber;
 	private String emailAddress;
 	private LocalDate dob;
@@ -98,6 +98,16 @@ public class Customer {
 			if (account.getAccountName().equals(accountName) && account.getCurrentBalance() >= amount) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * This method checks if an input password is correct
+	 */
+	public boolean passwordCorrect(String pw) {
+		if(pw.equals(this.password)){
+			return true;
 		}
 		return false;
 	}
