@@ -31,7 +31,8 @@ public class Account {
 	}
 
 	public String toString() {
-		return (accountName + ": " + currentBalance);
+		String balanceTo2SF = String.format("%.2f", this.currentBalance);
+		return (accountName + ": " + balanceTo2SF);
 	}
 
 }

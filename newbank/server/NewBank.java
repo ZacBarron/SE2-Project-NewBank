@@ -68,7 +68,7 @@ public class NewBank {
 		if(customers.containsKey(customer.getKey())) {
 			switch(command) {
 			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-			case "NEWACCOUNT" : return createNewAccount(customer, commandLine[1]);
+			case "NEWACCOUNT" : return createNewAccount(customer, commandLine);
 			case "MOVE" : return move(customer, commandLine);
 			case "PAY" : return pay(customer, commandLine);
 			case "HELP" : return help(commandLine);
@@ -82,10 +82,16 @@ public class NewBank {
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
-	private String createNewAccount(CustomerID customerID, String accountName) {
+	private String createNewAccount(CustomerID customerID, String[] commandLine) {
 		// Get the requester
 		Customer customer = customers.get(customerID.getKey());
 
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 2) {
+			return "FAIL. This command requires the following format: NEWACCOUNT <Name>";
+		}
+
+		String accountName = commandLine[1];
 		// Return FAIL if the requester already has an account with the given name
 		if (customer.accountExists(accountName)) {
 			return String.format("FAIL. Customer: %s already has an account with the name: %s",
@@ -101,14 +107,14 @@ public class NewBank {
 	private String move(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 4) {
-			return "FAIL. This command requires an amount, a source account, and a destination account";
+			return "FAIL. This command requires the following format: MOVE <Amount> <From> <To>";
 		}
 
 		// Fail if the amount argument is non-numeric
 		try {
 			double amount = Double.parseDouble(commandLine[1]);
 		} catch (NumberFormatException nfe) {
-			return "FAIL. This command requires an amount, a source account, and a destination account";
+			return "FAIL. This command requires the following format: MOVE <Amount> <From> <To>";
 		}
 
 		// Get the requester
