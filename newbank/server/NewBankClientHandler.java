@@ -93,18 +93,18 @@ public class NewBankClientHandler extends Thread{
 			out.println("Verifying username...");
 			if (!bank.newUserNameIsValid(userName)) {
 				out.println("Invalid username. Username must be unique" +
-						" and at least four characters long.");
+						" and at least 4 characters long.");
 				return signUpUser();
 			}
 
 			// ask for password
-			out.println("Enter Password (minimum six characters long, " +
-					"at least one digit, at least one lower and one upper case letter)");
+			out.println("Enter Password (minimum 6 and maximum 20 characters long, " +
+					"at least 1 digit, at least 1 lower and 1 upper case letter)");
 			String password = in.readLine();
 			out.println("Verifying password...");
 			if (!bank.newPasswordIsValid(password)) {
-				out.println("Invalid password. Please provide a password of minimum six characters," +
-						" at least one numeric and one capitalized letter");
+				out.println("Invalid password. Please provide a password of minimum 6 and maximum 20 characters," +
+						" at least 1 numeric and 1 capitalized letter");
 				return signUpUser();
 			}
 
