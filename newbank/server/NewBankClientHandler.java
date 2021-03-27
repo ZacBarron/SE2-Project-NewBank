@@ -92,8 +92,8 @@ public class NewBankClientHandler extends Thread{
 			String userName = in.readLine();
 			out.println("Verifying username...");
 			if (!bank.newUserNameIsValid(userName)) {
-				out.println("Invalid username. Username must be unique" +
-						" and at least 4 characters long.");
+				out.println("Invalid username. The username must be unique, " +
+						"should be minimum 4 and maximum 20 characters long, and must not contain space or any special character.");
 				return signUpUser();
 			}
 
