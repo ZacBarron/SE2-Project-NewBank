@@ -232,8 +232,8 @@ public class NewBank {
 			return "FAIL. The new password and retyped new password do not match";
 		}
 		// Fail if new password does not meet the complexity requirements
-		if(!customer.meetsComplexityRequirements(commandLine[2])) {
-			return "FAIL. The new password does not meet complexity requirements. It must contain at least one numeric character, one uppercase letter and one lowercase letter";
+		if(!bank.newPasswordIsValid(commandLine[2])) {
+			return "FAIL. The new password does not meet complexity requirements. It must contain at least one numeric character, one uppercase letter and one lowercase letter and be at least six characters";
 		}
 		customer.setPassword(commandLine[2]);
 		return "SUCCESS. The password has been updated";
