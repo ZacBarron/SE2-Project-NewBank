@@ -48,6 +48,9 @@ public class NewBank {
 
 		Help pay = new Help("PAY <Person/Company> <Amount> <From> <To>", "e.g. PAY John 100 Main Savings", "Returns SUCCESS or FAIL");
 		helpCommands.put("PAY", pay);
+
+		Help payExternal = new Help("PAYEXTERNAL <Amount> <From> <Sort Code> <Account Number>", "PAYEXTERNAL 100 102030 12345678", "Returns SUCCESS or FAIL");
+		helpCommands.put("PAYEXTERNAL", payExternal);
 	}
 	
 	public static NewBank getBank() {
@@ -85,6 +88,7 @@ public class NewBank {
 			case "NEWACCOUNT" : return createNewAccount(customer, commandLine);
 			case "MOVE" : return move(customer, commandLine);
 			case "PAY" : return pay(customer, commandLine);
+			case "PAYEXTERNAL" : return payExternal(customer, commandLine);
 			case "HELP" : return help(commandLine);
 			default : return "FAIL. Command not recognized.";
 			}
@@ -211,6 +215,50 @@ public class NewBank {
 		payee.modifyAccountBalance(amount, payeeAccount);
 
 		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
+	}
+
+	private String payExternal(CustomerID customerID, String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 5) {
+			return "FAIL. This command requires the following format: PAY <Amount> <From> <Sort Code> <Account Number>";
+		}
+		double amount;
+
+		// Fail if the amount argument is non-numeric
+		try {
+			amount = Double.parseDouble(commandLine[1]);
+		} catch (NumberFormatException nfe) {
+			return "FAIL. Please enter a numeric value for argument: <Amount>";
+		}
+
+		Customer payer = customers.get(customerID.getKey());
+		String payerAccount = commandLine[2];
+
+		// FAIL if the payer account not exists
+		if (!payer.accountExists(payerAccount)) {
+			return String.format("FAIL. Customer: %s has no account with the name: %s",
+					customerID.getKey(), payerAccount);
+		}
+
+		// FAIL if the payer account has insufficient funds
+		if (!payer.eligibleToPay(amount, payerAccount)) {
+			return String.format("FAIL. Insufficient funds in account: %s", payerAccount);
+		}
+
+		// FAIL if sort code invalid format
+		if (!commandLine[3].matches(".*\\d.*") && commandLine[3].length() != 6) {
+			return "FAIL. Invalid sort code for destination account";
+		}
+
+		// FAIL if account number invalid format
+		if (!commandLine[4].matches(".*\\d.*") && commandLine[4].length() != 8) {
+			return "FAIL. Invalid account number for destination account";
+		}
+
+		// Modify balance
+		// Additional logic required to handle real external payments in the production version of the client
+		payer.modifyAccountBalance(amount * -1, payerAccount);
+		return String.format("SUCCESS. %s paid to account number %s paid from account: %s", amount, commandLine[4], payerAccount);
 	}
 
 	private String help(String[] commandLine) {
