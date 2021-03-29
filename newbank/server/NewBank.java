@@ -1,5 +1,6 @@
 package newbank.server;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -59,8 +60,9 @@ public class NewBank {
 	}
 
 	// creates a new customer from the given credentials
-	public synchronized CustomerID createNewCustomerID(String userName, String password) {
+	public synchronized CustomerID createNewCustomerID(String userName, String password, LocalDate dob) {
 		Customer newCustomer = new Customer(userName, password);
+		newCustomer.setDOB(dob);
 		customers.put(userName, newCustomer);
 		return new CustomerID(userName);
 	}
@@ -71,6 +73,10 @@ public class NewBank {
 
 	public synchronized boolean newPasswordIsValid(String password) {
 		return customerService.newPasswordIsValid(password);
+	}
+
+	public synchronized boolean isOverEighteen(LocalDate dob) {
+		return customerService.isOverEighteen(dob);
 	}
 
 	// commands from the NewBank customer are processed in this method
