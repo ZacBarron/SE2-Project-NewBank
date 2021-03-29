@@ -7,15 +7,20 @@ import java.time.LocalDate;
 public class Customer {
 	
 	private ArrayList<Account> accounts;
+	private String userName;
 	private String forenames;
 	private String surname;
-	private String password = "foo";
+	private String password;
 	private String phoneNumber;
 	private String emailAddress;
 	private LocalDate dob;
 	private PostalAddress address;
 	
-	public Customer() {accounts = new ArrayList<>();}
+	public Customer(String userName, String password) {
+		accounts = new ArrayList<>();
+		this.userName = userName;
+		this.password = password;
+	}
 	
 	public String accountsToString() {
 		String s = "";
@@ -46,6 +51,8 @@ public class Customer {
 	public void setPostalAddress(PostalAddress postalAddress) {address = postalAddress;}
 
 	// Getter methods for personal details
+	public String getUserName() {return userName;}
+
 	public String getForenames() {return forenames;}
 
 	public String getSurname() {return surname;}
