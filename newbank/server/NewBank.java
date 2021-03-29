@@ -8,25 +8,27 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private HashMap<String,Help> helpCommands;
+	private CustomerService customerService;
 	
 	private NewBank() {
 		customers = new HashMap<>();
 		addTestData();
 		helpCommands = new HashMap<>();
 		addHelpCommands();
+		customerService = new CustomerService();
 	}
 	
 	private void addTestData() {
-		Customer bhagy = new Customer();
+		Customer bhagy = new Customer("Bhagy", "Foooo1");
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.addAccount(new Account("Savings", 1500.0));
 		customers.put("Bhagy", bhagy);
 		
-		Customer christina = new Customer();
+		Customer christina = new Customer("Christina", "Foooo2");
 		christina.addAccount(new Account("Savings", 1500.0));
 		customers.put("Christina", christina);
 		
-		Customer john = new Customer();
+		Customer john = new Customer("John", "Foooo3");
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
 	}
@@ -53,10 +55,22 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		if(customers.containsKey(userName) && customers.get(userName).passwordCorrect(password)) {
-			return new CustomerID(userName);
-		}
-		return null;
+		return customerService.checkLogInDetails(customers, userName, password);
+	}
+
+	// creates a new customer from the given credentials
+	public synchronized CustomerID createNewCustomerID(String userName, String password) {
+		Customer newCustomer = new Customer(userName, password);
+		customers.put(userName, newCustomer);
+		return new CustomerID(userName);
+	}
+
+	public synchronized boolean newUserNameIsValid(String userName) {
+		return customerService.newUserNameIsValid(customers, userName);
+	}
+
+	public synchronized boolean newPasswordIsValid(String password) {
+		return customerService.newPasswordIsValid(password);
 	}
 
 	// commands from the NewBank customer are processed in this method
