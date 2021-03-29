@@ -116,7 +116,6 @@ public class Customer {
 	 * This method is used to modify the a given balance by a given amount
 	 * @param amount the amount to be transferred
 	 * @param accountName the account to pay from
-	 * @return boolean
 	 */
 	public void modifyAccountBalance(double amount, String accountName) {
 		for (Account account : accounts) {
@@ -124,5 +123,27 @@ public class Customer {
 				account.changeBalance(amount);
 			}
 		}
+	}
+
+	/**
+	 * This method checks that a password meets the complexity requirements
+	 * @param password the password to be checked
+	 * @return boolean
+	 */
+	public boolean meetsComplexityRequirements(String password) {
+		// Password must be a minimum of 8 chars
+		if (password.length() < 8) {
+			return false;
+		}
+		// Password must contain numbers
+		if (!(password.matches(".*\\d.*"))) {
+			return false;
+		}
+		// Password must contain uppercase letters
+		if (!(password.matches(".*[A-Z].*"))) {
+			return false;
+		}
+		// Password must contain lowercase letters
+		return password.matches(".*[a-z].*");
 	}
 }
