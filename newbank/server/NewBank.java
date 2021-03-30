@@ -231,7 +231,7 @@ public class NewBank {
 
 	private String payExternal(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
-		if(commandLine.length != 5) {
+		if (commandLine.length != 5) {
 			return "FAIL. This command requires the following format: PAY <Amount> <From> <Sort Code> <Account Number>";
 		}
 		double amount;
@@ -271,6 +271,7 @@ public class NewBank {
 		// Additional logic required to handle real external payments in the production version of the client
 		payer.modifyAccountBalance(amount * -1, payerAccount);
 		return String.format("SUCCESS. %s paid to account number %s paid from account: %s", amount, commandLine[4], payerAccount);
+	}
 
 	private String changePassword(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
