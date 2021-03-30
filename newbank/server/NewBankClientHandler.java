@@ -26,7 +26,8 @@ public class NewBankClientHandler extends Thread{
 		// keep getting requests from the client and processing them
 		try {
 			CustomerID customer = null;
-			while(customer == null){
+			boolean userLoggedIn = false;
+			while(customer == null) {
 				// choose between sign in & sign up
 				out.println("Sign in by pressing 0(zero) or sign up be pressing 1!");
 				String startAction = in.readLine();
@@ -34,16 +35,20 @@ public class NewBankClientHandler extends Thread{
 				customer = identifyCustomer(startAction);
 
 				// if the user is authenticated then get requests from the user and process them
-				if(customer == null){
+				if (customer == null) {
 					out.println("Log In Failed, please try again");
+				} else {
+					out.println("Log In Successful. What do you want to do?");
+					while (customer != null) {
+						String request = in.readLine();
+						System.out.println("Request from " + customer.getKey());
+						String response = bank.processRequest(customer, request);
+						out.println(response);
+						if (response.equals("Log out")) {
+							customer = null;
+						}
+					}
 				}
-			}
-			out.println("Log In Successful. What do you want to do?");
-			while(true) {
-				String request = in.readLine();
-				System.out.println("Request from " + customer.getKey());
-				String response = bank.processRequest(customer, request);
-				out.println(response);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
