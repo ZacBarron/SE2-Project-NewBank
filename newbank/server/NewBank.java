@@ -101,6 +101,7 @@ public class NewBank {
 			case "PAYEXTERNAL" : return payExternal(customer, commandLine);
 			case "HELP" : return help(commandLine);
 			case "CHANGEPASSWORD" : return changePassword(customer, commandLine);
+			case "LOGOUT" : return logOut(customer);
 			default : return "FAIL. Command not recognized.";
 			}
 		}
@@ -318,5 +319,9 @@ public class NewBank {
 			}
 		}
 		return "FAIL. The command you entered does not exist";
+	}
+
+	private String logOut(CustomerID customer) {
+		return "Log out";
 	}
 }
