@@ -1,5 +1,6 @@
 package newbank.server;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -51,6 +52,10 @@ public class NewBank {
 
 		Help payExternal = new Help("PAYEXTERNAL <Amount> <From> <Sort Code> <Account Number>", "PAYEXTERNAL 100 102030 12345678", "Returns SUCCESS or FAIL");
 		helpCommands.put("PAYEXTERNAL", payExternal);
+
+		Help changePassword = new Help("CHANGEPASSWORD <current password> <new password> <retype new password>", "e.g CHANGEPASSWORD password123 p@55w.rd1234 p@55w.rd1234","Returns SUCCESS or FAIL");
+		helpCommands.put("CHANGEPASSWORD", changePassword);
+
 	}
 	
 	public static NewBank getBank() {
@@ -62,8 +67,9 @@ public class NewBank {
 	}
 
 	// creates a new customer from the given credentials
-	public synchronized CustomerID createNewCustomerID(String userName, String password) {
+	public synchronized CustomerID createNewCustomerID(String userName, String password, LocalDate dob) {
 		Customer newCustomer = new Customer(userName, password);
+		newCustomer.setDOB(dob);
 		customers.put(userName, newCustomer);
 		return new CustomerID(userName);
 	}
@@ -74,6 +80,10 @@ public class NewBank {
 
 	public synchronized boolean newPasswordIsValid(String password) {
 		return customerService.newPasswordIsValid(password);
+	}
+
+	public synchronized boolean isOverEighteen(LocalDate dob) {
+		return customerService.isOverEighteen(dob);
 	}
 
 	// commands from the NewBank customer are processed in this method
@@ -90,6 +100,7 @@ public class NewBank {
 			case "PAY" : return pay(customer, commandLine);
 			case "PAYEXTERNAL" : return payExternal(customer, commandLine);
 			case "HELP" : return help(commandLine);
+			case "CHANGEPASSWORD" : return changePassword(customer, commandLine);
 			default : return "FAIL. Command not recognized.";
 			}
 		}
@@ -217,6 +228,7 @@ public class NewBank {
 		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
 	}
 
+
 	private String payExternal(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 5) {
@@ -259,6 +271,27 @@ public class NewBank {
 		// Additional logic required to handle real external payments in the production version of the client
 		payer.modifyAccountBalance(amount * -1, payerAccount);
 		return String.format("SUCCESS. %s paid to account number %s paid from account: %s", amount, commandLine[4], payerAccount);
+
+	private String changePassword(CustomerID customerID, String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 4) {
+			return "FAIL. This command requires the following format: CHANGEPASSWORD  <current password> <new password> <retype new password>>";
+		}
+		Customer customer = customers.get(customerID.getKey());
+		// Fail if current password is incorrect
+		if(!customer.passwordCorrect(commandLine[1])) {
+			return "FAIL. The current password is incorrect";
+		}
+		// Fail if new password and retype new password don't match
+		if(!commandLine[2].equals(commandLine[3])) {
+			return "FAIL. The new password and retyped new password do not match";
+		}
+		// Fail if new password does not meet the complexity requirements
+		if(!bank.newPasswordIsValid(commandLine[2])) {
+			return "FAIL. The new password does not meet complexity requirements. It must contain at least one numeric character, one uppercase letter and one lowercase letter and be at least six characters";
+		}
+		customer.setPassword(commandLine[2]);
+		return "SUCCESS. The password has been updated";
 	}
 
 	private String help(String[] commandLine) {

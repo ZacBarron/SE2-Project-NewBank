@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class NewBankClientHandler extends Thread{
 	
@@ -87,6 +90,26 @@ public class NewBankClientHandler extends Thread{
 	private CustomerID signUpUser() throws IOException {
 		try {
 
+			// ask for dob
+			out.println("Enter your date of birth (dd/mm/yyyy): ");
+			String dob = in.readLine();
+
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");;
+			LocalDate dateOfBirth = null;
+
+			try {
+				dateOfBirth = LocalDate.parse(dob, formatter);
+			} catch (DateTimeParseException e) {
+				out.println("Please enter your date of birth in the correct format");
+				return signUpUser();
+			}
+
+			// Fail if not over 18
+			if (!bank.isOverEighteen(dateOfBirth)) {
+				out.println("You must be over 18 years old to register for a new account");
+				return null;
+			}
+
 			// ask for user name
 			out.println("Enter Username");
 			String userName = in.readLine();
@@ -109,7 +132,7 @@ public class NewBankClientHandler extends Thread{
 			}
 
 			out.println("Creating account...");
-			return bank.createNewCustomerID(userName, password);
+			return bank.createNewCustomerID(userName, password, dateOfBirth);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw e;
