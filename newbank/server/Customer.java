@@ -20,6 +20,7 @@ public class Customer {
 		accounts = new ArrayList<>();
 		this.userName = userName;
 		this.password = password;
+		this.dob = dob;
 	}
 	
 	public String accountsToString() {
@@ -46,7 +47,7 @@ public class Customer {
 
 	public void setEmail(String address) {emailAddress = address;}
 
-	public void setDOB(int year, int month, int day) {dob.of(year, month, day);}
+	public void setDOB(LocalDate dateOfBirth) {dob = dateOfBirth;}
 
 	public void setPostalAddress(PostalAddress postalAddress) {address = postalAddress;}
 

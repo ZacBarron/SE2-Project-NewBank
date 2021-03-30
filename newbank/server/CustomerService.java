@@ -1,5 +1,7 @@
 package newbank.server;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +31,12 @@ public class CustomerService {
 
     public boolean newPasswordIsValid(String password) {
         return validByRegexPattern(PASSWORD_PATTERN, password);
+    }
+
+    public boolean isOverEighteen(LocalDate dob) {
+        LocalDate dateToday = LocalDate.now();
+        int age = Period.between(dob, dateToday).getYears();
+        return (age >= 18);
     }
 
     private boolean validByRegexPattern(String regexPattern, String stringToValidate) {
