@@ -48,6 +48,9 @@ public class NewBank {
 
 		Help pay = new Help("PAY <Person/Company> <Amount> <From> <To>", "e.g. PAY John 100 Main Savings", "Returns SUCCESS or FAIL");
 		helpCommands.put("PAY", pay);
+
+		Help changePassword = new Help("CHANGEPASSWORD <current password> <new password> <retype new password>", "e.g CHANGEPASSWORD password123 p@55w.rd1234 p@55w.rd1234","Returns SUCCESS or FAIL");
+		helpCommands.put("CHANGEPASSWORD", changePassword);
 	}
 	
 	public static NewBank getBank() {
@@ -86,6 +89,7 @@ public class NewBank {
 			case "MOVE" : return move(customer, commandLine);
 			case "PAY" : return pay(customer, commandLine);
 			case "HELP" : return help(commandLine);
+			case "CHANGEPASSWORD" : return changePassword(customer, commandLine);
 			default : return "FAIL. Command not recognized.";
 			}
 		}
@@ -211,6 +215,28 @@ public class NewBank {
 		payee.modifyAccountBalance(amount, payeeAccount);
 
 		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
+	}
+
+	private String changePassword(CustomerID customerID, String[] commandLine) {
+		// Fail if the incorrect number of arguments are passed
+		if(commandLine.length != 4) {
+			return "FAIL. This command requires the following format: CHANGEPASSWORD  <current password> <new password> <retype new password>>";
+		}
+		Customer customer = customers.get(customerID.getKey());
+		// Fail if current password is incorrect
+		if(!customer.passwordCorrect(commandLine[1])) {
+			return "FAIL. The current password is incorrect";
+		}
+		// Fail if new password and retype new password don't match
+		if(!commandLine[2].equals(commandLine[3])) {
+			return "FAIL. The new password and retyped new password do not match";
+		}
+		// Fail if new password does not meet the complexity requirements
+		if(!bank.newPasswordIsValid(commandLine[2])) {
+			return "FAIL. The new password does not meet complexity requirements. It must contain at least one numeric character, one uppercase letter and one lowercase letter and be at least six characters";
+		}
+		customer.setPassword(commandLine[2]);
+		return "SUCCESS. The password has been updated";
 	}
 
 	private String help(String[] commandLine) {

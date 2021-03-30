@@ -123,7 +123,6 @@ public class Customer {
 	 * This method is used to modify the a given balance by a given amount
 	 * @param amount the amount to be transferred
 	 * @param accountName the account to pay from
-	 * @return boolean
 	 */
 	public void modifyAccountBalance(double amount, String accountName) {
 		for (Account account : accounts) {
