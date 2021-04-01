@@ -38,7 +38,7 @@ public class NewBank {
 		Help help = new Help("HELP or HELP <Command>", "e.g. HELP MOVE", "Returns a help description for all commands or for one specific command");
 		helpCommands.put("HELP", help);
 
-		Help showMyAccounts = new Help("SHOWMYACCOUNTS", "e.g. Main: 1000.0", "Returns a list of all the customers accounts along with their current balance");
+		Help showMyAccounts = new Help("SHOWMYACCOUNTS", "", "Returns a list of all the customers accounts along with their current balance");
 		helpCommands.put("SHOWMYACCOUNTS", showMyAccounts);
 
 		Help newAccount = new Help("NEWACCOUNT <Name>", "e.g. NEWACCOUNT Savings", "Returns SUCCESS or FAIL");
@@ -56,6 +56,8 @@ public class NewBank {
 		Help changePassword = new Help("CHANGEPASSWORD <current password> <new password> <retype new password>", "e.g CHANGEPASSWORD password123 p@55w.rd1234 p@55w.rd1234","Returns SUCCESS or FAIL");
 		helpCommands.put("CHANGEPASSWORD", changePassword);
 
+		Help logOut = new Help("LOGOUT", "","Returns Log out");
+		helpCommands.put("LOGOUT", logOut);
 	}
 	
 	public static NewBank getBank() {
@@ -109,6 +111,11 @@ public class NewBank {
 	}
 
 	private String showMyAccounts(CustomerID customer) {
+		// Fail if the incorrect number of arguments are passed
+		if(!customers.get(customer.getKey()).hasAnAccount()) {
+			return "You have no accounts, use the NEWACCOUNT command to create an account";
+		}
+
 		return (customers.get(customer.getKey())).accountsToString();
 	}
 
