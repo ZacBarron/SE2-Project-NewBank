@@ -7,7 +7,6 @@ e.g. HELP MOVE
 Returns a help description for all commands or for one specific command
 
 SHOWMYACCOUNTS
-e.g. Main: 1000.0
 Returns a list of all the customers accounts along with their current balance
 
 NEWACCOUNT <Name>
@@ -21,3 +20,14 @@ Returns SUCCESS or FAIL
 PAY <Person/Company> <Amount> <From> <To>
 e.g. PAY John 100 Main Savings
 Returns SUCCESS or FAIL
+
+PAYEXTERNAL <Amount> <From> <Sort Code> <Account Number>
+e.g. PAYEXTERNAL 100 102030 12345678
+Returns SUCCESS or FAIL
+
+CHANGEPASSWORD <current password> <new password> <retype new password>
+e.g CHANGEPASSWORD password123 p@55w.rd1234 p@55w.rd1234
+Returns SUCCESS or FAIL
+
+LOGOUT
+Returns Log out

@@ -94,6 +94,13 @@ public class Customer {
 		return null;
 	}
 
+	public boolean hasAnAccount() {
+		if (this.accounts.isEmpty()) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * This method is used to check if the customer has sufficient funds
 	 * on a given account for a transaction
