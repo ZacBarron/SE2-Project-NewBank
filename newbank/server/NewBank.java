@@ -10,20 +10,27 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,Help> helpCommands;
 	private CustomerService customerService;
+	private DataService dataService;
 	
 	private NewBank() {
 		customers = new HashMap<>();
-		addTestData();
 		helpCommands = new HashMap<>();
 		addHelpCommands();
 		customerService = new CustomerService();
+		dataService = new DataService();
+		addTestData();
+		dataService.readUsers();
 	}
 	
 	private void addTestData() {
 		Customer bhagy = new Customer("Bhagy", "Foooo1");
 		bhagy.addAccount(new Account("Main", 1000.0));
 		bhagy.addAccount(new Account("Savings", 1500.0));
+		// testing adding accounts to the persistence layer
+		dataService.addAccount(new Account("Main", 1000.0));
+		dataService.addAccount(new Account("Savings", 1500.0));
 		customers.put("Bhagy", bhagy);
+		dataService.createUser(bhagy);
 		
 		Customer christina = new Customer("Christina", "Foooo2");
 		christina.addAccount(new Account("Savings", 1500.0));
@@ -73,6 +80,7 @@ public class NewBank {
 		Customer newCustomer = new Customer(userName, password);
 		newCustomer.setDOB(dob);
 		customers.put(userName, newCustomer);
+		dataService.createUser(newCustomer);
 		return new CustomerID(userName);
 	}
 
