@@ -24,20 +24,20 @@ public class NewBank {
 	
 	private void addTestData() {
 		Customer bhagy = new Customer("Bhagy", "Foooo1");
-		bhagy.addAccount(new Account("Main", 1000.0));
-		bhagy.addAccount(new Account("Savings", 1500.0));
+		bhagy.addAccount(new Account("Main", 1000.0, "Bhagy"));
+		bhagy.addAccount(new Account("Savings", 1500.0, "Bhagy"));
 		// testing adding accounts to the persistence layer
-		dataService.addAccount(new Account("Main", 1000.0));
-		dataService.addAccount(new Account("Savings", 1500.0));
+		dataService.addAccount(new Account("Main", 1000.0, "Bhagy"));
+		dataService.addAccount(new Account("Savings", 1500.0, "Bhagy"));
 		customers.put("Bhagy", bhagy);
 		dataService.createUser(bhagy);
 		
 		Customer christina = new Customer("Christina", "Foooo2");
-		christina.addAccount(new Account("Savings", 1500.0));
+		christina.addAccount(new Account("Savings", 1500.0, "Christina"));
 		customers.put("Christina", christina);
 		
 		Customer john = new Customer("John", "Foooo3");
-		john.addAccount(new Account("Checking", 250.0));
+		john.addAccount(new Account("Checking", 250.0, "John"));
 		customers.put("John", john);
 	}
 
@@ -144,7 +144,8 @@ public class NewBank {
 		}
 
 		// Create the account
-		customer.addAccount(new Account(accountName, 0));
+		// customer.addAccount(new Account(accountName, 0, customer.getUserName()));
+		dataService.addAccount(new Account(accountName, 0, customer.getUserName()));
 
 		return String.format("SUCCESS. %s account created for user: %s", accountName, customerID.getKey());
 	}

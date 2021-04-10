@@ -7,14 +7,15 @@ import java.util.*;
 
 
 public class DataService {
-
+    private static final String ACCOUNTS_FILEPATH = "Accounts.json";
+    private static final String CUSTOMERS_FILEPATH = "Customers.json";
 
     /*
     For some reason, the password field isn't carried across to the json
      */
     public void createUser(Customer customer) {
         try {
-            File customers = new File("Customers.json");
+            File customers = new File(CUSTOMERS_FILEPATH);
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(customer);
             if(customers.createNewFile()){
@@ -41,7 +42,7 @@ public class DataService {
         try {
             ObjectMapper mapper = new ObjectMapper();
 
-            File customers = new File("Customers.json");
+            File customers = new File(CUSTOMERS_FILEPATH);
             Scanner reader = new Scanner(customers);
             while(reader.hasNextLine()){
                 String json = reader.nextLine();
@@ -58,17 +59,19 @@ public class DataService {
         // To do
     }
 
-    // This works but currently won't save the user name, we could add the user name to the account class. 
+    /*
+    Appends an account to the accounts file storage, or creates a new file if not exists.
+     */
     public void addAccount(Account account){
         try {
-            File customers = new File("Accounts.json");
+            File accountsFile = new File(ACCOUNTS_FILEPATH);
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(account);
-            if(customers.createNewFile()){
-                Files.write(customers.toPath(), Arrays.asList(json), StandardOpenOption.CREATE);
+            if(accountsFile.createNewFile()){
+                Files.write(accountsFile.toPath(), Arrays.asList(json), StandardOpenOption.CREATE);
             }
             else{
-                Files.write(customers.toPath(), Arrays.asList(json), StandardOpenOption.APPEND);
+                Files.write(accountsFile.toPath(), Arrays.asList(json), StandardOpenOption.APPEND);
             }
         } catch (Exception e) {
             System.out.println("An error occurred.");
@@ -77,7 +80,21 @@ public class DataService {
     }
 
     public  void readAccounts(){
-        // To do
+        ArrayList<String> accounts = new ArrayList<String>();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+
+            File accountsFile = new File(ACCOUNTS_FILEPATH);
+            Scanner reader = new Scanner(accountsFile);
+            while(reader.hasNextLine()){
+                String json = reader.nextLine();
+                accounts.add(json);
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        System.out.println(accounts);
     }
 
     public void updateAccount(){
