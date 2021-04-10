@@ -2,6 +2,7 @@ package newbank.server;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 public class NewBank {
@@ -27,8 +28,8 @@ public class NewBank {
 		bhagy.addAccount(new Account("Main", 1000.0, "Bhagy"));
 		bhagy.addAccount(new Account("Savings", 1500.0, "Bhagy"));
 		// testing adding accounts to the persistence layer
-		dataService.addAccount(new Account("Main", 1000.0, "Bhagy"));
-		dataService.addAccount(new Account("Savings", 1500.0, "Bhagy"));
+		dataService.createAccount(new Account("Main", 1000.0, "Bhagy"));
+		dataService.createAccount(new Account("Savings", 1500.0, "Bhagy"));
 		customers.put("Bhagy", bhagy);
 		dataService.createUser(bhagy);
 		
@@ -127,7 +128,14 @@ public class NewBank {
 		// Get the requester
 		Customer customerEntity = customers.get(customer.getKey());
 
-		return dataService.readAccounts(customerEntity.getUserName());
+		List<Account> accounts = dataService.getAccounts(customerEntity.getUserName());
+
+		String s = "";
+		for(Account a : accounts) {
+			s += a.toString() + "\n";
+		}
+		s = s.substring(0,s.length()-1);
+		return s;
 	}
 
 	private String createNewAccount(CustomerID customerID, String[] commandLine) {
@@ -141,7 +149,7 @@ public class NewBank {
 
 		String accountName = commandLine[1];
 
-		return dataService.addAccount(new Account(accountName, 0, customer.getUserName()));
+		return dataService.createAccount(new Account(accountName, 0, customer.getUserName()));
 	}
 
 	private String move(CustomerID customerID, String[] commandLine) {

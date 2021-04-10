@@ -5,3 +5,7 @@ newbank/newbank.iml
 newbank/pom.xml
 newbank/Accounts.json
 newbank/Customers.json
+Accounts.json
+Customers.json
+pom.xml
+target/

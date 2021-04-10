@@ -11,6 +11,14 @@ public class DataService {
     private static final String ACCOUNTS_FILEPATH = "Accounts.json";
     private static final String CUSTOMERS_FILEPATH = "Customers.json";
 
+    private File accountsFile;
+    private ObjectMapper mapper ;
+
+    DataService() {
+        accountsFile = new File(ACCOUNTS_FILEPATH);
+        mapper = new ObjectMapper();
+    }
+
     /*
     For some reason, the password field isn't carried across to the json
      */
@@ -63,11 +71,9 @@ public class DataService {
     /*
     Appends an account to the accounts file storage, or creates a new file if not exists.
      */
-    public String addAccount(Account account){
+    public String createAccount(Account account){
         try {
             ArrayList<Account> accounts = new ArrayList<>();
-            File accountsFile = new File(ACCOUNTS_FILEPATH);
-            ObjectMapper mapper = new ObjectMapper();
 
             if(!accountsFile.createNewFile()){
                 accounts = mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
@@ -88,31 +94,63 @@ public class DataService {
     }
 
     /*
-    Read accounts information for a customer.
+    Get the accounts of a customer by customer name.
      */
-    public String readAccounts(String customerName){
+    public List<Account> getAccounts(String customerName){
         List<Account> accounts = new ArrayList<>();
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            File accountsFile = new File(ACCOUNTS_FILEPATH);
-            accounts = mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
+            accounts = getAccountsFromFile();
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        accounts =  accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
+        return accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
                 .collect(Collectors.toList());
-
-        String s = "";
-        for(Account a : accounts) {
-            s += a.toString() + "\n";
-        }
-        s = s.substring(0,s.length()-1);
-        return s;
     }
 
-    public void updateAccount(){
-        // To do
+    public void updateAccount(Account account){
+        List<Account> accounts;
+        try {
+            accounts = getAccountsFromFile();
+            Account accountToUpdate = getSpecificAccount(accounts, account);
+
+            int index = accounts.indexOf(accountToUpdate);
+            accounts.set(index, account);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteAccount(Account account){
+        List<Account> accounts;
+        try {
+            accounts = getAccountsFromFile();
+            Account accountToDelete = getSpecificAccount(accounts, account);
+
+            int index = accounts.indexOf(accountToDelete);
+            accounts.remove(index);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
+        } catch (Exception e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    private List<Account> getAccountsFromFile() throws Exception {
+        try {
+            return mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
+        } catch (Exception e) {
+            throw new Exception("Failed to get accounts");
+        }
+    }
+
+    private Account getSpecificAccount(List<Account> accounts, Account specificAccount) {
+        return accounts.stream()
+                .filter(a -> a.getCustomerName().equals(specificAccount.getCustomerName())
+                        && a.getAccountName().equals(specificAccount.getAccountName()))
+                .findFirst().get();
     }
 
 }
