@@ -58,6 +58,8 @@ public class Customer {
 
 	public String getSurname() {return surname;}
 
+	public String getPassword() {return password;}
+
 	public String getPhoneNumber() {return phoneNumber;}
 
 	public String getEmailAddress() {return emailAddress;}

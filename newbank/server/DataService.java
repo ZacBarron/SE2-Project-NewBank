@@ -19,9 +19,6 @@ public class DataService {
         mapper = new ObjectMapper();
     }
 
-    /*
-    For some reason, the password field isn't carried across to the json
-     */
     public void createUser(Customer customer) {
         try {
             File customers = new File(CUSTOMERS_FILEPATH);
