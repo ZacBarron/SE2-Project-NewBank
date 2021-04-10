@@ -53,6 +53,8 @@ public class Account {
 		this.customerName = customerName;
 	}
 
+	public Account() { }
+
 	// Change the current balance by the given amount
 	public void changeBalance(double amount) {
 		currentBalance += amount;

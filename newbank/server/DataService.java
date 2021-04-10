@@ -1,10 +1,11 @@
 package newbank.server;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-
+import java.util.stream.Collectors;
 
 public class DataService {
     private static final String ACCOUNTS_FILEPATH = "Accounts.json";
@@ -62,39 +63,52 @@ public class DataService {
     /*
     Appends an account to the accounts file storage, or creates a new file if not exists.
      */
-    public void addAccount(Account account){
+    public String addAccount(Account account){
         try {
+            ArrayList<Account> accounts = new ArrayList<>();
             File accountsFile = new File(ACCOUNTS_FILEPATH);
             ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(account);
-            if(accountsFile.createNewFile()){
-                Files.write(accountsFile.toPath(), Arrays.asList(json), StandardOpenOption.CREATE);
+
+            if(!accountsFile.createNewFile()){
+                accounts = mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
             }
-            else{
-                Files.write(accountsFile.toPath(), Arrays.asList(json), StandardOpenOption.APPEND);
+            if(!accounts.stream().anyMatch(a -> a.getAccountName().equals(account.getAccountName()))){
+                accounts.add(account);
+                mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
+            } else {
+                return String.format("FAIL. Customer: %s already has an account with the name: %s",
+                        account.getCustomerName(), account.getAccountName());
             }
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+        return String.format("SUCCESS. %s account created for user: %s",
+                account.getAccountName(), account.getCustomerName());
     }
 
-    public  void readAccounts(){
-        ArrayList<String> accounts = new ArrayList<String>();
+    /*
+    Read accounts information for a customer.
+     */
+    public String readAccounts(String customerName){
+        List<Account> accounts = new ArrayList<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
-
             File accountsFile = new File(ACCOUNTS_FILEPATH);
-            Scanner reader = new Scanner(accountsFile);
-            while(reader.hasNextLine()){
-                String json = reader.nextLine();
-                accounts.add(json);
-            }
+            accounts = mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        System.out.println(accounts);
+        accounts =  accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
+                .collect(Collectors.toList());
+
+        String s = "";
+        for(Account a : accounts) {
+            s += a.toString() + "\n";
+        }
+        s = s.substring(0,s.length()-1);
+        return s;
     }
 
     public void updateAccount(){

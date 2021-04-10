@@ -124,7 +124,10 @@ public class NewBank {
 			return "You have no accounts, use the NEWACCOUNT command to create an account";
 		}
 
-		return (customers.get(customer.getKey())).accountsToString();
+		// Get the requester
+		Customer customerEntity = customers.get(customer.getKey());
+
+		return dataService.readAccounts(customerEntity.getUserName());
 	}
 
 	private String createNewAccount(CustomerID customerID, String[] commandLine) {
@@ -137,17 +140,8 @@ public class NewBank {
 		}
 
 		String accountName = commandLine[1];
-		// Return FAIL if the requester already has an account with the given name
-		if (customer.accountExists(accountName)) {
-			return String.format("FAIL. Customer: %s already has an account with the name: %s",
-					customerID.getKey(), accountName);
-		}
 
-		// Create the account
-		// customer.addAccount(new Account(accountName, 0, customer.getUserName()));
-		dataService.addAccount(new Account(accountName, 0, customer.getUserName()));
-
-		return String.format("SUCCESS. %s account created for user: %s", accountName, customerID.getKey());
+		return dataService.addAccount(new Account(accountName, 0, customer.getUserName()));
 	}
 
 	private String move(CustomerID customerID, String[] commandLine) {
