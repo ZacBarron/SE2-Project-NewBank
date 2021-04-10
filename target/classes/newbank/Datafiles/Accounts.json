@@ -1,0 +1,14 @@
+[{
+	"username": "Christian",
+	"accounts": [{
+			"accountName": "Savings",
+			"sortCode": 102030,
+			"accountNumber": "01010101"
+		},
+		{
+			"accountName": "ISA",
+			"sortCode": 102030,
+			"accountNumber": "02010101"
+		}
+	]
+}]

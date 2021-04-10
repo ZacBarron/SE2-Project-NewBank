@@ -1,0 +1,14 @@
+[{
+  "payerSortCode": "102030",
+  "payerAccountNumber": "01010101",
+  "payeeSortCode": "102030",
+  "payeeAccountNumber": "02010101",
+  "amount": 100
+},
+{
+  "payerSortCode": "102030",
+  "payerAccountNumber": "01010101",
+  "payeeSortCode": "123456",
+  "payeeAccountNumber": "01234567",
+  "amount": 100
+}]
