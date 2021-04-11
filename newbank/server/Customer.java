@@ -1,11 +1,13 @@
 package newbank.server;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 import java.time.LocalDate;
 
 public class Customer {
-	
+
 	private ArrayList<Account> accounts;
 	private String userName;
 	private String forenames;
@@ -15,12 +17,15 @@ public class Customer {
 	private String emailAddress;
 	private LocalDate dob;
 	private PostalAddress address;
-	
+
+	public Customer() {
+		super();
+	}
+
 	public Customer(String userName, String password) {
 		accounts = new ArrayList<>();
 		this.userName = userName;
 		this.password = password;
-		this.dob = dob;
 	}
 	
 	public String accountsToString() {

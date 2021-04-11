@@ -43,8 +43,8 @@ public class DataService {
     We may need to change the way the Customer object works?
     THis will need a return type, either an arraylist of all customers or a single customer requested in the argument
      */
-    public void readUsers() {
-        ArrayList<String> customerList = new ArrayList<String>();
+    public ArrayList readUsers() {
+        ArrayList<Customer> customerList = new ArrayList<Customer>();
         try {
             ObjectMapper mapper = new ObjectMapper();
 
@@ -52,13 +52,14 @@ public class DataService {
             Scanner reader = new Scanner(customers);
             while(reader.hasNextLine()){
                 String json = reader.nextLine();
-                customerList.add(json);
+                Customer customer = mapper.readValue(json, Customer.class);
+                customerList.add(customer);
             }
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        System.out.println(customerList);
+        return customerList;
     }
 
     public void updateUser(Customer customer){

@@ -3,6 +3,7 @@ package newbank.server;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 
 public class NewBank {
@@ -20,18 +21,26 @@ public class NewBank {
 		customerService = new CustomerService();
 		dataService = new DataService();
 		addTestData();
-		dataService.readUsers();
+		getUsers();
+		// dataService.readUsers();
 	}
 	
+	private void getUsers() {
+		ArrayList<Customer> fileCustomers = dataService.readUsers();
+		for (Customer customer : fileCustomers) {
+			customers.put(customer.getUserName(), customer);
+		}
+	}
+
 	private void addTestData() {
 		Customer bhagy = new Customer("Bhagy", "Foooo1");
 		bhagy.addAccount(new Account("Main", 1000.0, "Bhagy"));
 		bhagy.addAccount(new Account("Savings", 1500.0, "Bhagy"));
 		// testing adding accounts to the persistence layer
-		dataService.createAccount(new Account("Main", 1000.0, "Bhagy"));
-		dataService.createAccount(new Account("Savings", 1500.0, "Bhagy"));
+//		dataService.createAccount(new Account("Main", 1000.0, "Bhagy"));
+//		dataService.createAccount(new Account("Savings", 1500.0, "Bhagy"));
 		customers.put("Bhagy", bhagy);
-		dataService.createUser(bhagy);
+//		dataService.createUser(bhagy);
 		
 		Customer christina = new Customer("Christina", "Foooo2");
 		christina.addAccount(new Account("Savings", 1500.0, "Christina"));
