@@ -1,10 +1,6 @@
 package newbank.server;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
-
-import java.time.LocalDate;
 
 public class Customer {
 
@@ -18,6 +14,7 @@ public class Customer {
 	private String dob;
 	private PostalAddress address;
 
+	// Default constructor required for creating customer objects from JSON
 	public Customer() {
 		super();
 	}

@@ -37,7 +37,7 @@ public class DataService {
             e.printStackTrace();
         }
     }
-    
+
     public ArrayList readUsers() {
         ArrayList<Customer> customerList = new ArrayList<Customer>();
         try {
