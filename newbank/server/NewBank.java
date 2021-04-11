@@ -12,6 +12,7 @@ public class NewBank {
 	private HashMap<String,Help> helpCommands;
 	private CustomerService customerService;
 	private DataService dataService;
+	private MessageService messageService;
 	
 	private NewBank() {
 		customers = new HashMap<>();
@@ -21,6 +22,7 @@ public class NewBank {
 		dataService = new DataService();
 		addTestData();
 		dataService.readUsers();
+		messageService = new MessageService();
 	}
 	
 	private void addTestData() {
@@ -113,16 +115,16 @@ public class NewBank {
 			case "HELP" : return help(commandLine);
 			case "CHANGEPASSWORD" : return changePassword(customer, commandLine);
 			case "LOGOUT" : return logOut(customer);
-			default : return "FAIL. Command not recognized.";
+			default : return messageService.commandNotRecognized();
 			}
 		}
-		return "FAIL. Customer not recognized.";
+		return messageService.commandNotRecognized();
 	}
 
 	private String showMyAccounts(CustomerID customer) {
 		// Fail if the incorrect number of arguments are passed
 		if(!customers.get(customer.getKey()).hasAnAccount()) {
-			return "You have no accounts, use the NEWACCOUNT command to create an account";
+			return messageService.noAccount();
 		}
 
 		// Get the requester
@@ -130,12 +132,7 @@ public class NewBank {
 
 		List<Account> accounts = dataService.getAccounts(customerEntity.getUserName());
 
-		String s = "";
-		for(Account a : accounts) {
-			s += a.toString() + "\n";
-		}
-		s = s.substring(0,s.length()-1);
-		return s;
+		return messageService.printAccounts(accounts);
 	}
 
 	private String createNewAccount(CustomerID customerID, String[] commandLine) {
@@ -144,25 +141,24 @@ public class NewBank {
 
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 2) {
-			return "FAIL. This command requires the following format: NEWACCOUNT <Name>";
+			return messageService.newAccountFormatError();
 		}
 
 		String accountName = commandLine[1];
-
 		return dataService.createAccount(new Account(accountName, 0, customer.getUserName()));
 	}
 
 	private String move(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 4) {
-			return "FAIL. This command requires the following format: MOVE <Amount> <From> <To>";
+			return messageService.moveFormatError();
 		}
 
 		// Fail if the amount argument is non-numeric
 		try {
 			double amount = Double.parseDouble(commandLine[1]);
 		} catch (NumberFormatException nfe) {
-			return "FAIL. This command requires the following format: MOVE <Amount> <From> <To>";
+			return messageService.amountNotNumericError();
 		}
 
 		// Get the requester
@@ -170,15 +166,15 @@ public class NewBank {
 
 		// Fail if the from and to accounts don't exist
 		if(!customer.accountExists(commandLine[2])) {
-			return String.format("FAIL. The source account %s does not exist", commandLine[2]);
+			return messageService.sourceOrDestinationAccountNotExist("source", commandLine[2]);
 		}
 		if(!customer.accountExists(commandLine[3])) {
-			return String.format("FAIL. The destination account %s does not exist", commandLine[3]);
+			return messageService.sourceOrDestinationAccountNotExist("destination", commandLine[3]);
 		}
 
 		// Fail if source and destination accounts are the same
 		if(commandLine[2].equals(commandLine[3])) {
-			return "FAIL. The source and destination accounts must be different";
+			messageService.sourceAndDestinationIsSameError();
 		}
 
 		// Set source and destination accounts
@@ -188,20 +184,20 @@ public class NewBank {
 		// Fail if source account has insufficient funds
 		double amount = Double.parseDouble(commandLine[1]);
 		if (sourceAccount.getCurrentBalance() < amount) {
-			return "FAIL. Insufficient funds for the transfer";
+			return messageService.insufficientFundsFail(commandLine[2]);
 		}
 
 		// Decrease source account balance
 		sourceAccount.changeBalance(amount * -1);
 		// Increase destination account balance
 		destinationAccount.changeBalance(amount);
-		return String.format("SUCCESS. %s has been moved from %s to %s", commandLine[1], commandLine[2], commandLine[3]);
+		return messageService.moveSuccess(commandLine[1], commandLine[2], commandLine[3]);
 	}
 
 	private String pay(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 5) {
-			return "FAIL. This command requires the following format: PAY <Person/Company> <Amount> <From> <To>";
+			return messageService.payFormatError();
 		}
 
 		double amount;
@@ -209,7 +205,7 @@ public class NewBank {
 		try {
 			amount = Double.parseDouble(commandLine[2]);
 		} catch (NumberFormatException nfe) {
-			return "FAIL. Please enter a numeric value for argument: <Amount>";
+			return messageService.amountNotNumericError();
 		}
 
 		Customer payer = customers.get(customerID.getKey());
@@ -220,38 +216,36 @@ public class NewBank {
 
 		// FAIL if the recipient not exists
 		if (payee == null) {
-			return String.format("FAIL. Payee: %s does not exist", commandLine[1]);
+			return messageService.payeeNotExistError(commandLine[1]);
 		}
 
 		// FAIL if the payer account not exists
 		if (!payer.accountExists(payerAccount)) {
-			return String.format("FAIL. Customer: %s has no account with the name: %s",
-					customerID.getKey(), payerAccount);
+			return messageService.noAccountFoundError(customerID.getKey(), payerAccount);
 		}
 
 		// FAIL if the payee account not exists
 		if (!payee.accountExists(payeeAccount)) {
-			return String.format("FAIL. Customer: %s has no account with the name: %s",
-					commandLine[1], payeeAccount);
+			return messageService.noAccountFoundError(commandLine[1], payeeAccount);
 		}
 
 		// FAIL if the payer account has insufficient funds
 		if (!payer.eligibleToPay(amount, payerAccount)) {
-			return String.format("FAIL. Insufficient funds in account: %s", payerAccount);
+			return messageService.insufficientFundsFail(payerAccount);
 		}
 
 		// Modify balances
 		payer.modifyAccountBalance(amount * -1, payerAccount);
 		payee.modifyAccountBalance(amount, payeeAccount);
 
-		return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, commandLine[1], payerAccount);
+		return messageService.paySuccess(commandLine[2], commandLine[1], payerAccount);
 	}
 
 
 	private String payExternal(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if (commandLine.length != 5) {
-			return "FAIL. This command requires the following format: PAY <Amount> <From> <Sort Code> <Account Number>";
+			return messageService.payExternalFormatError();
 		}
 		double amount;
 
@@ -259,7 +253,7 @@ public class NewBank {
 		try {
 			amount = Double.parseDouble(commandLine[1]);
 		} catch (NumberFormatException nfe) {
-			return "FAIL. Please enter a numeric value for argument: <Amount>";
+			return messageService.amountNotNumericError();
 		}
 
 		Customer payer = customers.get(customerID.getKey());
@@ -267,57 +261,56 @@ public class NewBank {
 
 		// FAIL if the payer account not exists
 		if (!payer.accountExists(payerAccount)) {
-			return String.format("FAIL. Customer: %s has no account with the name: %s",
-					customerID.getKey(), payerAccount);
+			return messageService.noAccountFoundError(customerID.getKey(), payerAccount);
 		}
 
 		// FAIL if the payer account has insufficient funds
 		if (!payer.eligibleToPay(amount, payerAccount)) {
-			return String.format("FAIL. Insufficient funds in account: %s", payerAccount);
+			return messageService.insufficientFundsFail(payerAccount);
 		}
 
 		// FAIL if sort code invalid format
 		if (!commandLine[3].matches(".*\\d.*") && commandLine[3].length() != 6) {
-			return "FAIL. Invalid sort code for destination account";
+			return messageService.invalidDestinationSortCode();
 		}
 
 		// FAIL if account number invalid format
 		if (!commandLine[4].matches(".*\\d.*") && commandLine[4].length() != 8) {
-			return "FAIL. Invalid account number for destination account";
+			return messageService.invalidDestinationAccountNumber();
 		}
 
 		// Modify balance
 		// Additional logic required to handle real external payments in the production version of the client
 		payer.modifyAccountBalance(amount * -1, payerAccount);
-		return String.format("SUCCESS. %s paid to account number %s paid from account: %s", amount, commandLine[4], payerAccount);
+		return messageService.payExternalSuccess(commandLine[1], commandLine[4], payerAccount);
 	}
 
 	private String changePassword(CustomerID customerID, String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 4) {
-			return "FAIL. This command requires the following format: CHANGEPASSWORD  <current password> <new password> <retype new password>>";
+			return messageService.changePasswordFormatError();
 		}
 		Customer customer = customers.get(customerID.getKey());
 		// Fail if current password is incorrect
 		if(!customer.passwordCorrect(commandLine[1])) {
-			return "FAIL. The current password is incorrect";
+			return messageService.incorrectPasswordError();
 		}
 		// Fail if new password and retype new password don't match
 		if(!commandLine[2].equals(commandLine[3])) {
-			return "FAIL. The new password and retyped new password do not match";
+			return messageService.passwordsDontMatch();
 		}
 		// Fail if new password does not meet the complexity requirements
 		if(!bank.newPasswordIsValid(commandLine[2])) {
-			return "FAIL. The new password does not meet complexity requirements. It must contain at least one numeric character, one uppercase letter and one lowercase letter and be at least six characters";
+			return messageService.passwordComplexityError();
 		}
 		customer.setPassword(commandLine[2]);
-		return "SUCCESS. The password has been updated";
+		return messageService.changePasswordSuccess();
 	}
 
 	private String help(String[] commandLine) {
 		// Fail if the incorrect number of arguments are passed
 		if (commandLine.length > 2)
-			return "FAIL. This command requires the following format: HELP or HELP <Command>";
+			return messageService.helpFormatError();
 
 		// Print all commands help if only HELP is typed
 		if (commandLine.length == 1) {
@@ -336,7 +329,7 @@ public class NewBank {
 				return helpCommand.toString();
 			}
 		}
-		return "FAIL. The command you entered does not exist";
+		return messageService.commandNotRecognized();
 	}
 
 	private String logOut(CustomerID customer) {
