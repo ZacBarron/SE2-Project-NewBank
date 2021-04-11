@@ -104,9 +104,6 @@ public class Customer {
 		if ((new ArrayList<Account>(dataService.getAccounts(this.userName))).isEmpty()) {
 			return false;
 		}
-	//	if (this.accounts.isEmpty()) {
-	//		return false;
-	//	}
 		return true;
 	}
 
