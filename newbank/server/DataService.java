@@ -13,10 +13,12 @@ public class DataService {
 
     private File accountsFile;
     private ObjectMapper mapper ;
+    private MessageService messageService;
 
     DataService() {
         accountsFile = new File(ACCOUNTS_FILEPATH);
         mapper = new ObjectMapper();
+        messageService = new MessageService();
     }
 
     public void createUser(Customer customer) {
@@ -80,15 +82,12 @@ public class DataService {
                 accounts.add(account);
                 mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
             } else {
-                return String.format("FAIL. Customer: %s already has an account with the name: %s",
-                        account.getCustomerName(), account.getAccountName());
+                return messageService.accountAlreadyExist(account.getCustomerName(), account.getAccountName());
             }
         } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            return messageService.unexpectedError(e);
         }
-        return String.format("SUCCESS. %s account created for user: %s",
-                account.getAccountName(), account.getCustomerName());
+        return messageService.accountCreated(account.getAccountName(), account.getCustomerName());
     }
 
     /*
@@ -99,41 +98,44 @@ public class DataService {
         try {
             accounts = getAccountsFromFile();
         } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            System.out.println(messageService.unexpectedError(e));
         }
         return accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
                 .collect(Collectors.toList());
     }
 
-    public void updateAccount(Account account){
+    public String updateAccount(Account account){
         List<Account> accounts;
         try {
             accounts = getAccountsFromFile();
             Account accountToUpdate = getSpecificAccount(accounts, account);
-
+            if (accountToUpdate == null) {
+                return messageService.noAccountFoundError(account.getCustomerName(), account.getAccountName());
+            }
             int index = accounts.indexOf(accountToUpdate);
             accounts.set(index, account);
             mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
         } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            return messageService.unexpectedError(e);
         }
+        return messageService.accountUpdated(account.getAccountName());
     }
 
-    public void deleteAccount(Account account){
+    public String deleteAccount(Account account){
         List<Account> accounts;
         try {
             accounts = getAccountsFromFile();
             Account accountToDelete = getSpecificAccount(accounts, account);
-
+            if (accountToDelete == null) {
+                return messageService.noAccountFoundError(account.getCustomerName(), account.getAccountName());
+            }
             int index = accounts.indexOf(accountToDelete);
             accounts.remove(index);
             mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
         } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            return messageService.unexpectedError(e);
         }
+        return messageService.accountDeleted(account.getAccountName());
     }
 
     private List<Account> getAccountsFromFile() throws Exception {
@@ -150,5 +152,4 @@ public class DataService {
                         && a.getAccountName().equals(specificAccount.getAccountName()))
                 .findFirst().get();
     }
-
 }

@@ -1,0 +1,7 @@
+.idea/
+out/
+SE2-Project-NewBank.iml
+newbank/newbank.iml
+newbank/pom.xml
+newbank/Accounts.json
+newbank/Customers.json
