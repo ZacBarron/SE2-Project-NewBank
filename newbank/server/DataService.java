@@ -37,14 +37,7 @@ public class DataService {
             e.printStackTrace();
         }
     }
-
-    /*
-    So eventually we want to be in a position to use something like:
-    Customer = mapper.readValue(json, Customer.class);
-    on line 40, but currently this brings an error that we can't construct a customer that way
-    We may need to change the way the Customer object works?
-    THis will need a return type, either an arraylist of all customers or a single customer requested in the argument
-     */
+    
     public ArrayList readUsers() {
         ArrayList<Customer> customerList = new ArrayList<Customer>();
         try {

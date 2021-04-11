@@ -15,7 +15,7 @@ public class Customer {
 	private String password;
 	private String phoneNumber;
 	private String emailAddress;
-	private LocalDate dob;
+	private String dob;
 	private PostalAddress address;
 
 	public Customer() {
@@ -52,7 +52,7 @@ public class Customer {
 
 	public void setEmail(String address) {emailAddress = address;}
 
-	public void setDOB(LocalDate dateOfBirth) {dob = dateOfBirth;}
+	public void setDOB(String dateOfBirth) {dob = dateOfBirth;}
 
 	public void setPostalAddress(PostalAddress postalAddress) {address = postalAddress;}
 
@@ -69,7 +69,7 @@ public class Customer {
 
 	public String getEmailAddress() {return emailAddress;}
 
-	public LocalDate getDOB() {return dob;}
+	public String getDOB() {return dob;}
 
 	public PostalAddress getAddress() {return address;}
 

@@ -23,8 +23,6 @@ public class NewBank {
 		dataService = new DataService();
 		addTestData();
 		getUsers();
-		// dataService.readUsers();
-		dataService.readUsers();
 		messageService = new MessageService();
 	}
 	
@@ -39,11 +37,7 @@ public class NewBank {
 		Customer bhagy = new Customer("Bhagy", "Foooo1");
 		bhagy.addAccount(new Account("Main", 1000.0, "Bhagy"));
 		bhagy.addAccount(new Account("Savings", 1500.0, "Bhagy"));
-		// testing adding accounts to the persistence layer
-//		dataService.createAccount(new Account("Main", 1000.0, "Bhagy"));
-//		dataService.createAccount(new Account("Savings", 1500.0, "Bhagy"));
 		customers.put("Bhagy", bhagy);
-//		dataService.createUser(bhagy);
 		
 		Customer christina = new Customer("Christina", "Foooo2");
 		christina.addAccount(new Account("Savings", 1500.0, "Christina"));
@@ -89,7 +83,7 @@ public class NewBank {
 	}
 
 	// creates a new customer from the given credentials
-	public synchronized CustomerID createNewCustomerID(String userName, String password, LocalDate dob) {
+	public synchronized CustomerID createNewCustomerID(String userName, String password, String dob) {
 		Customer newCustomer = new Customer(userName, password);
 		newCustomer.setDOB(dob);
 		customers.put(userName, newCustomer);
