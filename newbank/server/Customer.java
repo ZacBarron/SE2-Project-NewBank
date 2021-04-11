@@ -13,6 +13,7 @@ public class Customer {
 	private String emailAddress;
 	private String dob;
 	private PostalAddress address;
+	private DataService dataService;
 
 	// Default constructor required for creating customer objects from JSON
 	public Customer() {
@@ -99,9 +100,13 @@ public class Customer {
 	}
 
 	public boolean hasAnAccount() {
-		if (this.accounts.isEmpty()) {
+		dataService = new DataService();
+		if ((new ArrayList<Account>(dataService.getAccounts(this.userName))).isEmpty()) {
 			return false;
 		}
+	//	if (this.accounts.isEmpty()) {
+	//		return false;
+	//	}
 		return true;
 	}
 

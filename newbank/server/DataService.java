@@ -93,6 +93,8 @@ public class DataService {
         } catch (Exception e) {
             System.out.println(messageService.unexpectedError(e));
         }
+        System.out.println(accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
+                .collect(Collectors.toList()));
         return accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
                 .collect(Collectors.toList());
     }
