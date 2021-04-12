@@ -66,13 +66,13 @@ public class DataService {
      */
     public String createAccount(Account account){
         try {
-            ArrayList<Account> accounts = new ArrayList<>();
+            List<Account> accounts = new ArrayList<>();
 
             if(!accountsFile.createNewFile()){
                 accounts = mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
             }
-            if(!accounts.stream().anyMatch(a -> a.getAccountName().equals(account.getAccountName())
-                    && a.getCustomerName().equals(account.getCustomerName()))){
+            accounts = getAccountsForUSer(accounts, account.getCustomerName());
+            if(!accounts.stream().anyMatch(a -> a.getAccountName().equals(account.getAccountName()))){
                 accounts.add(account);
                 mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
             } else {
@@ -147,5 +147,10 @@ public class DataService {
                 .filter(a -> a.getCustomerName().equals(specificAccount.getCustomerName())
                         && a.getAccountName().equals(specificAccount.getAccountName()))
                 .findFirst().get();
+    }
+
+    private List<Account> getAccountsForUSer(List<Account> accounts, String customerName) {
+        return accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
+                .collect(Collectors.toList());
     }
 }
