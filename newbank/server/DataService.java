@@ -71,8 +71,8 @@ public class DataService {
             if(!accountsFile.createNewFile()){
                 accounts = mapper.readValue(accountsFile, new TypeReference<ArrayList<Account>>(){});
             }
-            accounts = getAccountsForUSer(accounts, account.getCustomerName());
-            if(!accounts.stream().anyMatch(a -> a.getAccountName().equals(account.getAccountName()))){
+            List<Account> customerAccounts = getAccountsForUSer(accounts, account.getCustomerName());
+            if(!customerAccounts.stream().anyMatch(a -> a.getAccountName().equals(account.getAccountName()))){
                 accounts.add(account);
                 mapper.writerWithDefaultPrettyPrinter().writeValue(accountsFile, accounts);
             } else {
