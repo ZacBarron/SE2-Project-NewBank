@@ -1,5 +1,5 @@
 [{
-	"username": "Christian",
+	"customerName": "Christian",
 	"accounts": [{
 			"accountName": "Savings",
 			"sortCode": 102030,

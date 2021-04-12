@@ -2,7 +2,10 @@
 out/
 SE2-Project-NewBank.iml
 newbank/newbank.iml
-target/
+newbank/pom.xml
+newbank/Accounts.json
+newbank/Customers.json
 Accounts.json
 Customers.json
 pom.xml
+target/

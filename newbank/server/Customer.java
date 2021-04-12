@@ -2,10 +2,8 @@ package newbank.server;
 
 import java.util.ArrayList;
 
-import java.time.LocalDate;
-
 public class Customer {
-	
+
 	private ArrayList<Account> accounts;
 	private String userName;
 	private String forenames;
@@ -13,14 +11,19 @@ public class Customer {
 	private String password;
 	private String phoneNumber;
 	private String emailAddress;
-	private LocalDate dob;
+	private String dob;
 	private PostalAddress address;
-	
+	private DataService dataService;
+
+	// Default constructor required for creating customer objects from JSON
+	public Customer() {
+		super();
+	}
+
 	public Customer(String userName, String password) {
 		accounts = new ArrayList<>();
 		this.userName = userName;
 		this.password = password;
-		this.dob = dob;
 	}
 	
 	public String accountsToString() {
@@ -47,7 +50,7 @@ public class Customer {
 
 	public void setEmail(String address) {emailAddress = address;}
 
-	public void setDOB(LocalDate dateOfBirth) {dob = dateOfBirth;}
+	public void setDOB(String dateOfBirth) {dob = dateOfBirth;}
 
 	public void setPostalAddress(PostalAddress postalAddress) {address = postalAddress;}
 
@@ -58,11 +61,13 @@ public class Customer {
 
 	public String getSurname() {return surname;}
 
+	public String getPassword() {return password;}
+
 	public String getPhoneNumber() {return phoneNumber;}
 
 	public String getEmailAddress() {return emailAddress;}
 
-	public LocalDate getDOB() {return dob;}
+	public String getDOB() {return dob;}
 
 	public PostalAddress getAddress() {return address;}
 
@@ -95,7 +100,8 @@ public class Customer {
 	}
 
 	public boolean hasAnAccount() {
-		if (this.accounts.isEmpty()) {
+		dataService = new DataService();
+		if ((new ArrayList<Account>(dataService.getAccounts(this.userName))).isEmpty()) {
 			return false;
 		}
 		return true;

@@ -6,6 +6,7 @@ public class Account {
 	private String accountName;
 	private String sortCode;
 	private String accountNumber;
+	private String customerName;
 
 	/**
 	 * @return the name of the account
@@ -37,12 +38,22 @@ public class Account {
 		return accountNumber;
 	}
 
-	public Account(String accountName, double openingBalance) {
+	/**
+	 * @return the name of the related customer
+	 */
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public Account(String accountName, double openingBalance, String customerName) {
 		this.accountName = accountName;
 		this.currentBalance = openingBalance;
 		this.sortCode = "102030";
 		this.accountNumber = generateAccountNumber(8);
+		this.customerName = customerName;
 	}
+
+	public Account() { }
 
 	// Change the current balance by the given amount
 	public void changeBalance(double amount) {

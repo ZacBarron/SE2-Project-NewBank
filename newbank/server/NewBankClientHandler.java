@@ -136,7 +136,7 @@ public class NewBankClientHandler extends Thread{
 			}
 
 			out.println("Creating account...");
-			return bank.createNewCustomerID(userName, password, dateOfBirth);
+			return bank.createNewCustomerID(userName, password, dob);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw e;
