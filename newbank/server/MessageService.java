@@ -62,6 +62,10 @@ public class MessageService {
                 customer, payerAccount);
     }
 
+    public String noCustomerFoundError(String customer) {
+        return String.format("FAIL. Customer: %s not found", customer);
+    }
+
     public String paySuccess(String amount, String customer, String account) {
         return String.format("SUCCESS. %s payed for user: %s from account: %s", amount, customer, account);
     }
