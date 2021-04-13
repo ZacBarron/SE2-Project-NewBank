@@ -1,5 +1,7 @@
 package newbank.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -8,14 +10,23 @@ import java.util.Map.Entry;
 
 public class NewBank {
 	
-	private static final NewBank bank = new NewBank();
+	private static NewBank bank = null;
+
+	static {
+		try {
+			bank = new NewBank();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	private HashMap<String,Customer> customers;
 	private HashMap<String,Help> helpCommands;
 	private CustomerService customerService;
 	private DataService dataService;
 	private MessageService messageService;
 	
-	private NewBank() {
+	private NewBank() throws Exception {
 		customers = new HashMap<>();
 		helpCommands = new HashMap<>();
 		addHelpCommands();
@@ -26,10 +37,12 @@ public class NewBank {
 		messageService = new MessageService();
 	}
 	
-	private void getUsers() {
+	private void getUsers() throws Exception {
 		ArrayList<Customer> fileCustomers = dataService.readUsers();
-		for (Customer customer : fileCustomers) {
-			customers.put(customer.getUserName(), customer);
+		if (fileCustomers != null) {
+			for (Customer customer : fileCustomers) {
+				customers.put(customer.getUserName(), customer);
+			}
 		}
 	}
 
@@ -104,7 +117,7 @@ public class NewBank {
 	}
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customer, String request) {
+	public synchronized String processRequest(CustomerID customer, String request) throws JsonProcessingException {
 		// Split into into separate words to handle multi-word commands
 		String[] commandLine = request.split(" ");
 		String command = commandLine[0];
@@ -289,7 +302,7 @@ public class NewBank {
 		return messageService.payExternalSuccess(commandLine[1], commandLine[4], payerAccount);
 	}
 
-	private String changePassword(CustomerID customerID, String[] commandLine) {
+	private String changePassword(CustomerID customerID, String[] commandLine) throws JsonProcessingException {
 		// Fail if the incorrect number of arguments are passed
 		if(commandLine.length != 4) {
 			return messageService.changePasswordFormatError();
@@ -308,6 +321,7 @@ public class NewBank {
 			return messageService.passwordComplexityError();
 		}
 		customer.setPassword(commandLine[2]);
+		dataService.updateUser(customer);
 		return messageService.changePasswordSuccess();
 	}
 

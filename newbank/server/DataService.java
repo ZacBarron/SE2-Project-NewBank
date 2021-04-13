@@ -1,5 +1,6 @@
 package newbank.server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.*;
@@ -12,53 +13,55 @@ public class DataService {
     private static final String CUSTOMERS_FILEPATH = "Customers.json";
 
     private File accountsFile;
+    private File customersFile;
     private ObjectMapper mapper ;
     private MessageService messageService;
 
     DataService() {
         accountsFile = new File(ACCOUNTS_FILEPATH);
+        customersFile = new File(CUSTOMERS_FILEPATH);
         mapper = new ObjectMapper();
         messageService = new MessageService();
     }
 
-    public void createUser(Customer customer) {
+    public String createUser(Customer customer){
         try {
-            File customers = new File(CUSTOMERS_FILEPATH);
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(customer);
-            if(customers.createNewFile()){
-                Files.write(customers.toPath(), Arrays.asList(json), StandardOpenOption.CREATE);
+            List<Customer> customers = new ArrayList<>();
+
+            if(!customersFile.createNewFile()){
+                customers = mapper.readValue(customersFile, new TypeReference<ArrayList<Customer>>(){});
             }
-            else{
-                Files.write(customers.toPath(), Arrays.asList(json), StandardOpenOption.APPEND);
-            }
+            customers.add(customer);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(customersFile, customers);
         } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            return messageService.unexpectedError(e);
+        }
+        return "SUCCESS";
+    }
+
+    public ArrayList<Customer> readUsers() {
+        try {
+            return mapper.readValue(customersFile, new TypeReference<ArrayList<Customer>>(){});
+        } catch (Exception e) {
+            return null;
         }
     }
 
-    public ArrayList readUsers() {
-        ArrayList<Customer> customerList = new ArrayList<Customer>();
+    public String updateUser(Customer customer) throws JsonProcessingException {
+        List<Customer> customers;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-
-            File customers = new File(CUSTOMERS_FILEPATH);
-            Scanner reader = new Scanner(customers);
-            while(reader.hasNextLine()){
-                String json = reader.nextLine();
-                Customer customer = mapper.readValue(json, Customer.class);
-                customerList.add(customer);
+            customers = readUsers();
+            Customer customerToUpdate = getSpecificCustomer(customers, customer);
+            if (customerToUpdate == null) {
+                return messageService.noCustomerFoundError(customer.getUserName());
             }
+            int index = customers.indexOf(customerToUpdate);
+            customers.set(index, customer);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(customersFile, customers);
         } catch (Exception e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+            return messageService.unexpectedError(e);
         }
-        return customerList;
-    }
-
-    public void updateUser(Customer customer){
-        // To do
+        return "OK";
     }
 
     /*
@@ -152,5 +155,11 @@ public class DataService {
     private List<Account> getAccountsForUSer(List<Account> accounts, String customerName) {
         return accounts.stream().filter(a -> a.getCustomerName().equals(customerName))
                 .collect(Collectors.toList());
+    }
+
+    private Customer getSpecificCustomer(List<Customer> customers, Customer specificCustomer) {
+        return customers.stream()
+                .filter(a -> a.getUserName().equals(specificCustomer.getUserName()))
+                .findFirst().get();
     }
 }
